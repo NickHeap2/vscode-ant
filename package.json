@@ -1,0 +1,86 @@
+{
+    "name": "vscode-ant",
+    "displayName": "vscode-ant",
+    "description": "Ant support",
+    "version": "0.0.1",
+    "publisher": "sucklead",
+    "engines": {
+        "vscode": "^1.22.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "vscode-ant.runAntTarget",
+                "title": "Run Ant Target"
+            }
+        ],
+        "menus": {
+            "view/item/context": [
+                {
+                    "command": "vscode-ant.runAntTarget",
+                    "when": "view == antRunnerView && viewItem == antTarget"
+                }
+            ]
+        },
+        "views": {
+            "explorer": [
+                {
+                    "id": "antRunnerView",
+                    "name": "Ant Runner"
+                }
+            ]
+        },
+        "configuration": {
+            "type": "object",
+            "title": "Ant configuration options",
+            "properties": {
+                "ant.executable": {
+                    "type": "string",
+                    "default": "ant",
+                    "description": "Ant executable path."
+                },
+                "ant.home": {
+                    "type": "string",
+                    "default": "",
+                    "description": "ANT_HOME path."
+                },
+                "ant.envVars": {
+                    "type": "string",
+                    "default": "DLC=C:\\Progress\\OpenEdge",
+                    "description": "Ant environmental variables."
+                },
+                "ant.buildFiles": {
+                    "type": "string",
+                    "default": "build.xml",
+                    "description": "Ant build file types."
+                },
+                "ant.sortTargetsAlphabetically": {
+                    "type": "boolean",
+                    "default": "false",
+                    "description": "Sort targets alphabetically."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "eslint": "^4.11.0",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "xml2js": "^0.4.19"
+    }
+}
