@@ -6,8 +6,11 @@
       "url": "https://github.com/NickHeap"
     },
     "license": "MIT",
-    "repository": "github:NickHeap/vscode-ant",
-    "displayName": "vscode-ant",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/NickHeap/vscode-ant"
+    },
+    "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
     "version": "0.0.1",
     "publisher": "Sucklead",
