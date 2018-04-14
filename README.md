@@ -1,8 +1,8 @@
-# vscode-ant README
+# Ant Target Runner for Visual Studio Code
 
 This is a simple ant extension that parses build.xml in the root directory and exposes a list of targets in a treeview.
 You can then right click the target and select to execute that target in a terminal named 'Ant Target Runner'.
-The terminal session will be reused for future runs.
+The terminal session will be re-used for future runs.
 
 ## Features
 

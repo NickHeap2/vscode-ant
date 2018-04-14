@@ -13,7 +13,7 @@
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
     "version": "0.0.1",
-    "publisher": "Sucklead",
+    "publisher": "nickheap",
     "engines": {
         "vscode": "^1.22.0"
     },
