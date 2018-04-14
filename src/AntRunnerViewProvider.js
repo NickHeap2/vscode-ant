@@ -3,11 +3,53 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 
+var antTerminal
+var configOptions
+var antHome
+// var envVarsSettings
+var antExecutable
+var sortTargetsAlphabetically
+
 module.exports = class AntRunnerViewProvider {
-  constructor (rootPath) {
-    this.rootPath = rootPath
+  constructor (context) {
+    var workspaceFolders = vscode.workspace.workspaceFolders
+    this.rootPath = workspaceFolders[0].uri.fsPath
+
+    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(path.join(this.rootPath, 'build.xml'))
+    context.subscriptions.push(fileSystemWatcher)
+
+    fileSystemWatcher.onDidChange(() => {
+      this._onDidChangeTreeData.fire()
+    })
+    fileSystemWatcher.onDidDelete(() => {
+      this._onDidChangeTreeData.fire()
+    })
+    fileSystemWatcher.onDidCreate(() => {
+      this._onDidChangeTreeData.fire()
+    })
 
     this._parser = new xml2js.Parser()
+
+    this._onDidChangeTreeData = new vscode.EventEmitter()
+    this.onDidChangeTreeData = this._onDidChangeTreeData.event
+
+    this.getConfigOptions()
+    vscode.workspace.onDidChangeConfiguration(() => {
+      this.getConfigOptions()
+      this.refresh()
+    })
+  }
+
+  getConfigOptions () {
+    configOptions = vscode.workspace.getConfiguration('ant')
+    antHome = configOptions.get('home', '')
+    // envVarsSettings = configOptions.get('envVars', 'DLC=C:\\Progress\\OpenEdge')
+    antExecutable = configOptions.get('executable', 'ant')
+    sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
+  }
+
+  refresh () {
+    this._onDidChangeTreeData.fire()
   }
 
   getTreeItem (element) {
@@ -25,8 +67,8 @@ module.exports = class AntRunnerViewProvider {
 
     return new Promise((resolve, reject) => {
       if (element) {
+        resolve([])
         reject(new Error('It is empty!'))
-        // resolve(this.getDepsInPackageJson(path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')))
       } else {
         const buildXml = path.join(this.rootPath, 'build.xml')
         if (this.pathExists(buildXml)) {
@@ -59,19 +101,21 @@ module.exports = class AntRunnerViewProvider {
             vscode.window.showInformationMessage('Error parsing build.xml!')
             reject(new Error('Error parsing build.xml!:' + err))
           }
-          vscode.window.showInformationMessage('We have the build.xml!')
+          vscode.window.showInformationMessage('Targets loaded from build.xml!')
 
           var targets = result.project.target.map((target) => {
             return {
               label: target.$.name,
-              collapsibleState: false,
-              command: null,
+              collapsibleState: vscode.TreeItemCollapsibleState.None,
+              command: 'vscode-ant.runAntTask',
               contextValue: 'antTarget',
-              depends: target.$.depends
+              iconPath: false,
+              depends: target.$.depends,
+              targetName: target.$.name
             }
           })
 
-          resolve(targets)
+          resolve(this._sort(targets))
         })
       })
     })
@@ -87,7 +131,45 @@ module.exports = class AntRunnerViewProvider {
     return true
   }
 
-  runAntTask (context) {
-    console.log(context)
+  runAntTarget (context) {
+    if (!context) {
+      return
+    }
+
+    var target = context.targetName
+
+    if (!antTerminal) {
+      var envVars = {}
+      if (antHome) {
+        envVars.ANT_HOME = antHome
+      }
+
+      antTerminal = vscode.window.createTerminal({ name: 'Ant Target Runner', env: envVars })
+    }
+
+    antTerminal.sendText(`${antExecutable} ${target}`)
+    antTerminal.show()
+  }
+
+  _sort (nodes) {
+    if (!sortTargetsAlphabetically) {
+      return nodes
+    }
+
+    return nodes.sort((n1, n2) => {
+      if (n1.label < n2.label) {
+        return -1
+      } else if (n1.label > n2.label) {
+        return 1
+      } else {
+        return 0
+      }
+    })
+  }
+
+  terminalClosed (terminal) {
+    if (terminal._id === antTerminal._id) {
+      antTerminal = null
+    }
   }
 }

@@ -1,9 +1,16 @@
 {
     "name": "vscode-ant",
+    "author": {
+      "name": "Nick Heap",
+      "email": "nickheap@gmail.com",
+      "url": "https://github.com/NickHeap"
+    },
+    "license": "MIT",
+    "repository": "github:NickHeap/vscode-ant",
     "displayName": "vscode-ant",
-    "description": "Ant support",
+    "description": "Ant Target Runner",
     "version": "0.0.1",
-    "publisher": "sucklead",
+    "publisher": "Sucklead",
     "engines": {
         "vscode": "^1.22.0"
     },
@@ -51,19 +58,9 @@
                     "default": "",
                     "description": "ANT_HOME path."
                 },
-                "ant.envVars": {
-                    "type": "string",
-                    "default": "DLC=C:\\Progress\\OpenEdge",
-                    "description": "Ant environmental variables."
-                },
-                "ant.buildFiles": {
-                    "type": "string",
-                    "default": "build.xml",
-                    "description": "Ant build file types."
-                },
                 "ant.sortTargetsAlphabetically": {
                     "type": "boolean",
-                    "default": "false",
+                    "default": "true",
                     "description": "Sort targets alphabetically."
                 }
             }

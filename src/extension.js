@@ -4,17 +4,16 @@ const AntRunnerViewProvider = require('./AntRunnerViewProvider')
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate (context) {
-  // look for .xml files that are registered
-  const workspaceFolders = vscode.workspace.workspaceFolders
-  const rootPath = workspaceFolders[0].uri.fsPath
-
-  const antRunnerViewProvider = new AntRunnerViewProvider(rootPath)
+  const antRunnerViewProvider = new AntRunnerViewProvider(context)
 
   var antRunnerView = vscode.window.registerTreeDataProvider('antRunnerView', antRunnerViewProvider)
   context.subscriptions.push(antRunnerView)
 
-  var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antRunnerViewProvider.runAntTask)
+  var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antRunnerViewProvider.runAntTarget)
   context.subscriptions.push(runAntTarget)
+
+  var terminalClosed = vscode.window.onDidCloseTerminal(antRunnerViewProvider.terminalClosed)
+  context.subscriptions.push(terminalClosed)
 }
 exports.activate = activate
 
