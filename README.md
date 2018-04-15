@@ -15,6 +15,8 @@ A simple ant extension that parses build.xml in the root directory and allows yo
 
 ![Change tracking](/resources/tracking.gif "Change tracking")
 
+- Will load env vars from build.env (configurable) and pass them into ant.
+
 ## Requirements
 
 For this release the extension requires that your ant build xml file be in the root directory and be called build.xml.
@@ -26,7 +28,7 @@ This extension contributes the following settings:
 * `ant.executable`: the executable for ant. Default is ant.
 * `ant.home`: if set will set ANT_HOME env in terminal to this value. Default is blank.
 * `ant.sortTargetsAlphabetically`: should the targets be sorted alphabetically by default? Default is true.
-* `ant.envVars`: file name to load env vars from to pass to ant. Default is build.env.
+* `ant.envVarsFile`: file name to load env vars from to pass to ant. Default is build.env.
 
 ## Known Issues
 
@@ -36,4 +38,7 @@ Only works for build.xml in the root folder at the moment.
 
 Fixed the behaviour when starting with a workspace with no folders. Changed the activation of the extension to be when the view is first opened. Added toolbar button to run the currently selected target.
 
-## [0.0.5] - 2018-04-15
+## [0.0.6] - 2018-04-15
+### Fixed
+- Correct docs for config name.
+- Fix context menu run.

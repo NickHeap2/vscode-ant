@@ -10,25 +10,25 @@ function activate (context) {
   // antRunnerView = vscode.window.registerTreeDataProvider('antRunnerView', antRunnerViewProvider)
   context.subscriptions.push(antRunnerView)
 
-  var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antRunnerViewProvider.runAntTarget)
+  var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antRunnerViewProvider.runAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(runAntTarget)
 
-  var runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antRunnerViewProvider.runAntTarget)
+  var runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antRunnerViewProvider.runAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(runAntDependency)
 
-  var selectedAntTarget = vscode.commands.registerCommand('vscode-ant.selectedAntTarget', antRunnerViewProvider.selectedAntTarget)
+  var selectedAntTarget = vscode.commands.registerCommand('vscode-ant.selectedAntTarget', antRunnerViewProvider.selectedAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(selectedAntTarget)
 
-  var runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', () => antRunnerViewProvider.runSelectedAntTarget())
+  var runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', antRunnerViewProvider.runSelectedAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(runSelectedAntTarget)
 
-  var refreshAntTargets = vscode.commands.registerCommand('vscode-ant.refreshAntTargets', () => antRunnerViewProvider.refresh())
+  var refreshAntTargets = vscode.commands.registerCommand('vscode-ant.refreshAntTargets', antRunnerViewProvider.refresh.bind(antRunnerViewProvider))
   context.subscriptions.push(refreshAntTargets)
 
-  var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(() => antRunnerViewProvider.onDidChangeConfiguration())
+  var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(antRunnerViewProvider.onDidChangeConfiguration.bind(antRunnerViewProvider))
   context.subscriptions.push(onDidChangeConfiguration)
 
-  var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(() => antRunnerViewProvider.onDidChangeWorkspaceFolders())
+  var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(antRunnerViewProvider.onDidChangeWorkspaceFolders.bind(antRunnerViewProvider))
   context.subscriptions.push(onDidChangeWorkspaceFolders)
 
   var terminalClosed = vscode.window.onDidCloseTerminal(antRunnerViewProvider.terminalClosed)

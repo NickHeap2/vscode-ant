@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.6] - 2018-04-15
+### Fixed
+- Correct docs for config name.
+- Fix context menu run.
+
 ## [0.0.5] - 2018-04-15
 ### Added
 - Pass env vars from build.env into terminal (configurable).
