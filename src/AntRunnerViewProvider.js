@@ -58,7 +58,7 @@ module.exports = class AntRunnerViewProvider {
 
   getTreeItem (element) {
     if (element.contextValue === 'antFile') {
-      return {
+      let treeItem = {
         id: element.filePath,
         contextValue: element.contextValue,
         label: element.fileName,
@@ -66,6 +66,10 @@ module.exports = class AntRunnerViewProvider {
         collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
         tooltip: element.filePath
       }
+      if (element.project) {
+        treeItem.label = element.fileName + '    (' + element.project + ')'
+      }
+      return treeItem
     } else if (element.contextValue === 'antTarget') {
       let treeItem = {
         id: element.name,
@@ -128,22 +132,17 @@ module.exports = class AntRunnerViewProvider {
     return new Promise((resolve, reject) => {
       // add root element?
       if (!element) {
-        var buildXml = path.join(this.rootPath, 'build.xml')
-        if (this.pathExists(buildXml)) {
-          var root = {
-            id: 'build.xml',
-            contextValue: 'antFile',
-            filePath: buildXml,
-            fileName: 'build.xml'
-          }
-          resolve([root])
-        } else {
-          vscode.window.showInformationMessage('Workspace has no build.xml.')
-          resolve([])
-        }
+        this.getRoots()
+          .then((roots) => {
+            resolve(roots)
+          })
+          .catch((err) => {
+            console.log(err)
+            resolve([])
+          })
       } else {
         if (element.contextValue === 'antFile' && element.filePath) {
-          this.getTargetsInBuildXml(element.filePath)
+          this.getTargetsInProject(project)
             .then((targets) => {
               resolve(targets)
             })
@@ -177,35 +176,56 @@ module.exports = class AntRunnerViewProvider {
     })
   }
 
-  getTargetsInBuildXml (buildXml) {
+  getRoots () {
     return new Promise((resolve, reject) => {
-      fs.readFile(buildXml, 'utf-8', (err, data) => {
-        if (err) {
-          vscode.window.showInformationMessage('Error reading build.xml!')
-          reject(new Error('Error reading build.xml!: ' + err))
-        }
-        this._parser.parseString(data, (err, result) => {
+      var buildXml = path.join(this.rootPath, 'build.xml')
+      if (this.pathExists(buildXml)) {
+        fs.readFile(buildXml, 'utf-8', (err, data) => {
           if (err) {
-            vscode.window.showInformationMessage('Error parsing build.xml!')
-            reject(new Error('Error parsing build.xml!:' + err))
-          } else {
-            vscode.window.showInformationMessage('Targets loaded from build.xml!')
-
-            project = this.setParentValues(result.project)
-            var targets = project.target.map((target) => {
-              var antTarget = {
-                id: target.$.name,
-                contextValue: 'antTarget',
-                depends: target.$.depends,
-                name: target.$.name
-              }
-              return antTarget
-            })
-
-            resolve(this._sort(targets))
+            vscode.window.showInformationMessage('Error reading build.xml!')
+            reject(new Error('Error reading build.xml!: ' + err))
           }
+          this._parser.parseString(data, (err, result) => {
+            if (err) {
+              vscode.window.showInformationMessage('Error parsing build.xml!')
+              reject(new Error('Error parsing build.xml!:' + err))
+            } else {
+              vscode.window.showInformationMessage('Targets loaded from build.xml!')
+              project = this.setParentValues(result.project)
+
+              var root = {
+                id: 'build.xml',
+                contextValue: 'antFile',
+                filePath: buildXml,
+                fileName: 'build.xml'
+              }
+              if (project.$.name) {
+                root.project = project.$.name
+              }
+
+              resolve([root])
+            }
+          })
         })
+      } else {
+        vscode.window.showInformationMessage('Workspace has no build.xml.')
+        resolve([])
+      }
+    })
+  }
+
+  getTargetsInProject (buildXml) {
+    return new Promise((resolve, reject) => {
+      var targets = project.target.map((target) => {
+        var antTarget = {
+          id: target.$.name,
+          contextValue: 'antTarget',
+          depends: target.$.depends,
+          name: target.$.name
+        }
+        return antTarget
       })
+      resolve(this._sort(targets))
     })
   }
 

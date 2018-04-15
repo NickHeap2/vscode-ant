@@ -91,7 +91,7 @@
             "explorer": [
                 {
                     "id": "antRunnerView",
-                    "name": "Ant Runner"
+                    "name": "Ant Target Runner"
                 }
             ]
         },
