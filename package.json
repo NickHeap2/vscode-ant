@@ -1,18 +1,18 @@
 {
     "name": "vscode-ant",
     "author": {
-      "name": "Nick Heap",
-      "email": "nickheap@gmail.com",
-      "url": "https://github.com/NickHeap"
+        "name": "Nick Heap",
+        "email": "nickheap@gmail.com",
+        "url": "https://github.com/NickHeap"
     },
     "license": "MIT",
     "repository": {
-      "type": "git",
-      "url": "https://github.com/NickHeap/vscode-ant"
+        "type": "git",
+        "url": "https://github.com/NickHeap/vscode-ant"
     },
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.22.0"
@@ -20,24 +20,72 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "ant"
+    ],
     "activationEvents": [
         "*"
     ],
     "main": "./src/extension",
+    "icon": "resources/main.png",
     "contributes": {
         "commands": [
             {
+                "command": "vscode-ant.runSelectedAntTarget",
+                "title": "Run Selected Ant Target",
+                "icon": {
+                    "light": "resources/icons/light/run.svg",
+                    "dark": "resources/icons/dark/run.svg"
+                }
+            },
+            {
                 "command": "vscode-ant.runAntTarget",
-                "title": "Run Ant Target"
+                "title": "Run Ant Target",
+                "icon": {
+                    "light": "resources/icons/light/run.svg",
+                    "dark": "resources/icons/dark/run.svg"
+                }
+            },
+            {
+              "command": "vscode-ant.runAntDependency",
+              "title": "Run Ant Dependency",
+              "icon": {
+                  "light": "resources/icons/light/run.svg",
+                  "dark": "resources/icons/dark/run.svg"
+              }
+            },
+            {
+                "command": "vscode-ant.refreshAntTargets",
+                "title": "Refresh Ant Targets",
+                "icon": {
+                    "light": "resources/icons/light/refresh.svg",
+                    "dark": "resources/icons/dark/refresh.svg"
+                }
             }
         ],
         "menus": {
+            "view/title": [
+                {
+                    "command": "vscode-ant.runSelectedAntTarget",
+                    "when": "view == antRunnerView",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "vscode-ant.refreshAntTargets",
+                    "when": "view == antRunnerView",
+                    "group": "navigation@2"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "vscode-ant.runAntTarget",
                     "when": "view == antRunnerView && viewItem == antTarget"
-                }
-            ]
+                },
+                {
+                  "command": "vscode-ant.runAntDependency",
+                  "when": "view == antRunnerView && viewItem == antDepends"
+              }
+          ]
         },
         "views": {
             "explorer": [
@@ -81,6 +129,8 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
+        "data-tree": "^1.2.4",
+        "lodash": "^4.17.5",
         "xml2js": "^0.4.19"
     }
 }
