@@ -23,6 +23,12 @@
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
             ]
-        }
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Debug File",
+          "program": "${file}"
+      }
     ]
 }

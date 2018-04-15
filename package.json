@@ -12,10 +12,10 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "publisher": "nickheap",
     "engines": {
-        "vscode": "^1.22.0"
+        "vscode": "^1.18.1"
     },
     "categories": [
         "Other"
@@ -29,8 +29,8 @@
     "main": "./src/extension",
     "icon": "resources/main.png",
     "contributes": {
-            "commands": [
-              {
+        "commands": [
+            {
                 "command": "vscode-ant.selectedAntTarget",
                 "title": "Selected Ant Target"
             },
@@ -113,6 +113,11 @@
                     "default": "",
                     "description": "ANT_HOME path."
                 },
+                "ant.envVarsFile": {
+                    "type": "string",
+                    "default": "build.env",
+                    "description": "File name to load env vars from."
+                },
                 "ant.sortTargetsAlphabetically": {
                     "type": "boolean",
                     "default": "true",
@@ -133,6 +138,7 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
+        "dotenv": "^5.0.1",
         "lodash": "^4.17.5",
         "xml2js": "^0.4.19"
     }

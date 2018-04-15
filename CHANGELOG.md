@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.5] - 2018-04-15
+### Added
+- Pass env vars from build.env into terminal (configurable).
+- Drop vscode requirement to 1.18.1.
+
 ## [0.0.4] - 2018-04-15
 ### Added
 - Run currently selected target from the toolbar.

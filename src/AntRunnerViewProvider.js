@@ -3,11 +3,12 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 const _ = require('lodash')
+const dotenv = require('dotenv')
 
 var antTerminal
 var configOptions
 var antHome
-// var envVarsSettings
+var envVarsFile
 var antExecutable
 var sortTargetsAlphabetically
 
@@ -63,7 +64,7 @@ module.exports = class AntRunnerViewProvider {
   getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant')
     antHome = configOptions.get('home', '')
-    // envVarsSettings = configOptions.get('envVars', 'DLC=C:\\Progress\\OpenEdge')
+    envVarsFile = configOptions.get('envVarsFile', 'build.env')
     antExecutable = configOptions.get('executable', 'ant')
     sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
   }
@@ -313,12 +314,16 @@ module.exports = class AntRunnerViewProvider {
     var target = context.name
 
     if (!antTerminal) {
-      var envVars = {}
+      var envVars
+      if (envVarsFile && this.pathExists(path.join(this.rootPath, envVarsFile))) {
+        envVars = dotenv.parse(fs.readFileSync(path.join(this.rootPath, envVarsFile)))
+      }
+
       if (antHome) {
         envVars.ANT_HOME = antHome
       }
 
-      antTerminal = vscode.window.createTerminal({ name: 'Ant Target Runner', env: envVars })
+      antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
     }
 
     antTerminal.sendText(`${antExecutable} ${target}`)

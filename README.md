@@ -26,6 +26,7 @@ This extension contributes the following settings:
 * `ant.executable`: the executable for ant. Default is ant.
 * `ant.home`: if set will set ANT_HOME env in terminal to this value. Default is blank.
 * `ant.sortTargetsAlphabetically`: should the targets be sorted alphabetically by default? Default is true.
+* `ant.envVars`: file name to load env vars from to pass to ant. Default is build.env.
 
 ## Known Issues
 
@@ -35,10 +36,4 @@ Only works for build.xml in the root folder at the moment.
 
 Fixed the behaviour when starting with a workspace with no folders. Changed the activation of the extension to be when the view is first opened. Added toolbar button to run the currently selected target.
 
-## [0.0.4] - 2018-04-15
-### Added
-- Run currently selected target from the toolbar.
-### Fixed
-- Change activation to when view is opened.
-- Remove data-tree dependency.
-- Fix behaviour when empty workspace is opened.
+## [0.0.5] - 2018-04-15

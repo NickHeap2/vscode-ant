@@ -1,5 +1,11 @@
 <project name="Test project name" default="default">
+  <property environment="env"/>
+
   <target name="default" depends="clean,compile,test,dist">
+  </target>
+
+  <target name="dlc" description="Show dlc!">
+    <echo message="${env.DLC}"/>
   </target>
 
   <target name="clean" description="Clean all the things!">
