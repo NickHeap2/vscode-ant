@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.22.0"
@@ -24,12 +24,16 @@
         "ant"
     ],
     "activationEvents": [
-        "*"
+        "onView:antRunnerView"
     ],
     "main": "./src/extension",
     "icon": "resources/main.png",
     "contributes": {
-        "commands": [
+            "commands": [
+              {
+                "command": "vscode-ant.selectedAntTarget",
+                "title": "Selected Ant Target"
+            },
             {
                 "command": "vscode-ant.runSelectedAntTarget",
                 "title": "Run Selected Ant Target",
@@ -47,12 +51,12 @@
                 }
             },
             {
-              "command": "vscode-ant.runAntDependency",
-              "title": "Run Ant Dependency",
-              "icon": {
-                  "light": "resources/icons/light/run.svg",
-                  "dark": "resources/icons/dark/run.svg"
-              }
+                "command": "vscode-ant.runAntDependency",
+                "title": "Run Ant Dependency",
+                "icon": {
+                    "light": "resources/icons/light/run.svg",
+                    "dark": "resources/icons/dark/run.svg"
+                }
             },
             {
                 "command": "vscode-ant.refreshAntTargets",
@@ -82,10 +86,10 @@
                     "when": "view == antRunnerView && viewItem == antTarget"
                 },
                 {
-                  "command": "vscode-ant.runAntDependency",
-                  "when": "view == antRunnerView && viewItem == antDepends"
-              }
-          ]
+                    "command": "vscode-ant.runAntDependency",
+                    "when": "view == antRunnerView && viewItem == antDepends"
+                }
+            ]
         },
         "views": {
             "explorer": [
@@ -129,7 +133,6 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "data-tree": "^1.2.4",
         "lodash": "^4.17.5",
         "xml2js": "^0.4.19"
     }

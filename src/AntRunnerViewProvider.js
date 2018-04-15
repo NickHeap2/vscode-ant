@@ -11,25 +11,17 @@ var antHome
 var antExecutable
 var sortTargetsAlphabetically
 
+var extensionContext
 var project
+var selectedAntTarget
 
 module.exports = class AntRunnerViewProvider {
   constructor (context) {
+    extensionContext = context
     var workspaceFolders = vscode.workspace.workspaceFolders
-    this.rootPath = workspaceFolders[0].uri.fsPath
-
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(path.join(this.rootPath, 'build.xml'))
-    context.subscriptions.push(fileSystemWatcher)
-
-    fileSystemWatcher.onDidChange(() => {
-      this._onDidChangeTreeData.fire()
-    })
-    fileSystemWatcher.onDidDelete(() => {
-      this._onDidChangeTreeData.fire()
-    })
-    fileSystemWatcher.onDidCreate(() => {
-      this._onDidChangeTreeData.fire()
-    })
+    if (workspaceFolders) {
+      this.watchBuildXml(workspaceFolders)
+    }
 
     this._parser = new xml2js.Parser()
 
@@ -42,6 +34,30 @@ module.exports = class AntRunnerViewProvider {
   onDidChangeConfiguration () {
     this.getConfigOptions()
     this.refresh()
+  }
+
+  onDidChangeWorkspaceFolders () {
+    var workspaceFolders = vscode.workspace.workspaceFolders
+    if (workspaceFolders) {
+      this.watchBuildXml(workspaceFolders)
+    }
+  }
+
+  watchBuildXml (workspaceFolders) {
+    this.rootPath = workspaceFolders[0].uri.fsPath
+
+    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(path.join(this.rootPath, 'build.xml'))
+    extensionContext.subscriptions.push(fileSystemWatcher)
+
+    fileSystemWatcher.onDidChange(() => {
+      this._onDidChangeTreeData.fire()
+    })
+    fileSystemWatcher.onDidDelete(() => {
+      this._onDidChangeTreeData.fire()
+    })
+    fileSystemWatcher.onDidCreate(() => {
+      this._onDidChangeTreeData.fire()
+    })
   }
 
   getConfigOptions () {
@@ -74,8 +90,11 @@ module.exports = class AntRunnerViewProvider {
       let treeItem = {
         id: element.name,
         label: element.name,
-        command: 'vscode-ant.runAntTask',
-        arguments: [element.name],
+        command: {
+          arguments: [element.name],
+          command: 'vscode-ant.selectedAntTarget',
+          title: 'selectedAntTarget'
+        },
         contextValue: 'antTarget',
         tooltip: element.description
       }
@@ -101,8 +120,11 @@ module.exports = class AntRunnerViewProvider {
     } else if (element.contextValue === 'antDepends') {
       let treeItem = {
         label: element.name,
-        command: 'vscode-ant.runAntDependency',
-        arguments: [element.name],
+        command: {
+          arguments: [element.name],
+          command: 'vscode-ant.selectedAntTarget',
+          title: 'selectedAntTarget'
+        },
         contextValue: 'antDepends',
         iconPath: {
           light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'dependency.svg'),
@@ -273,8 +295,14 @@ module.exports = class AntRunnerViewProvider {
     return true
   }
 
-  runSelectedAntTarget (context) {
-    console.log('wut?')
+  selectedAntTarget (target) {
+    selectedAntTarget = target
+  }
+
+  runSelectedAntTarget () {
+    if (selectedAntTarget) {
+      this.runAntTarget({name: selectedAntTarget})
+    }
   }
 
   runAntTarget (context) {

@@ -16,7 +16,10 @@ function activate (context) {
   var runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antRunnerViewProvider.runAntTarget)
   context.subscriptions.push(runAntDependency)
 
-  var runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', antRunnerViewProvider.runSelectedAntTarget)
+  var selectedAntTarget = vscode.commands.registerCommand('vscode-ant.selectedAntTarget', antRunnerViewProvider.selectedAntTarget)
+  context.subscriptions.push(selectedAntTarget)
+
+  var runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', () => antRunnerViewProvider.runSelectedAntTarget())
   context.subscriptions.push(runSelectedAntTarget)
 
   var refreshAntTargets = vscode.commands.registerCommand('vscode-ant.refreshAntTargets', () => antRunnerViewProvider.refresh())
@@ -24,6 +27,9 @@ function activate (context) {
 
   var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(() => antRunnerViewProvider.onDidChangeConfiguration())
   context.subscriptions.push(onDidChangeConfiguration)
+
+  var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(() => antRunnerViewProvider.onDidChangeWorkspaceFolders())
+  context.subscriptions.push(onDidChangeWorkspaceFolders)
 
   var terminalClosed = vscode.window.onDidCloseTerminal(antRunnerViewProvider.terminalClosed)
   context.subscriptions.push(terminalClosed)

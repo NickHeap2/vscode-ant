@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.4] - 2018-04-15
+### Added
+- Run currently selected target from the toolbar.
+### Fixed
+- Change activation to when view is opened.
+- Remove data-tree dependency.
+- Fix behaviour when empty workspace is opened.
+
 ## [0.0.3] - 2018-04-15
 ### Added
 - Recursively cascade dependencies in tree.
