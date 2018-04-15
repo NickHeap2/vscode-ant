@@ -4,17 +4,18 @@ This is a simple ant extension that parses build.xml in the root directory and e
 You can then right click the target or dependency and select to run it in a terminal named 'Ant Target Runner'.
 The terminal session will be re-used for future runs.
 
-![It works like this](/resources/demo.gif "It works like this")
-
 ## Features
 
 - Searches for build.xml in the root directory on startup and loads the targets ready to run.
-- Will detect changes, creates and deletes of the build.xml file and reload the target list automatically.
 - The targets and their dependencies are visualised in a treeview and can be run from the toolbar or the context menu option.
 - Dependencies of dependencies are shown recursively to give a full picture of what will be run and in which order.
 - Targets can be sorted as they appear in the file or in alphabetical order.
 
-![It looks like this](/resources/sshot.png "It looks like this")
+![It works like this](/resources/demo.gif "It works like this")
+
+- Will detect changes, creates and deletes of the build.xml file and reload the target list automatically.
+
+![Change tracking](/resources/tracking.gif "Change tracking")
 
 ## Requirements
 
