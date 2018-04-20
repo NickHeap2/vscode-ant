@@ -35,6 +35,10 @@
                 "title": "Selected Ant Target"
             },
             {
+                "command": "vscode-ant.revealDefinition",
+                "title": "Reveal Definition"
+            },
+            {
                 "command": "vscode-ant.runSelectedAntTarget",
                 "title": "Run Selected Ant Target",
                 "icon": {
@@ -83,11 +87,23 @@
             "view/item/context": [
                 {
                     "command": "vscode-ant.runAntTarget",
-                    "when": "view == antRunnerView && viewItem == antTarget"
+                    "when": "view == antRunnerView && viewItem == antTarget",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "vscode-ant.revealDefinition",
+                    "when": "view == antRunnerView && viewItem == antTarget",
+                    "group": "navigation@2"
                 },
                 {
                     "command": "vscode-ant.runAntDependency",
-                    "when": "view == antRunnerView && viewItem == antDepends"
+                    "when": "view == antRunnerView && viewItem == antDepends",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "vscode-ant.revealDefinition",
+                    "when": "view == antRunnerView && viewItem == antDepends",
+                    "group": "navigation@2"
                 }
             ]
         },

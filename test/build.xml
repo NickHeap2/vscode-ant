@@ -1,31 +1,62 @@
 <project name="Test project name" default="default">
   <property environment="env"/>
 
-  <target name="default" depends="clean,compile,test,dist">
-  </target>
+  <target name="default" depends="clean,compile,test,dist"/>
 
   <target name="dlc" description="Show dlc!">
     <echo message="${env.DLC}"/>
+
+
+
+
+
   </target>
 
   <target name="clean" description="Clean all the things!">
     <echo message="All the things are cleaned!"/>
+
+
+
+
+
   </target>
 
   <target name="start_databases">
     <echo message="Databases are now running."/>
+
+
+
+
+
   </target>
 
   <target name="compile" depends="start_databases">
     <echo message="All the things are compiled!"/>
+
+
+
+
+
   </target>
 
-  <target name="test" depends="compile">
+  <target
+    name="test"
+    depends="compile">
     <echo message="0 test have been run."/>
+
+
+
+
+
   </target>
 
   <target name="dist" depends="compile,test">
     <echo message="We shipped it!"/>
+
+
+
+
+
   </target>
 
 </project>

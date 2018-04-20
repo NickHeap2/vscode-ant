@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.7] - 2018-04-20
+### Added
+- Add reveal target line definition.
+
 ## [0.0.6] - 2018-04-15
 ### Fixed
 - Correct docs for config name.

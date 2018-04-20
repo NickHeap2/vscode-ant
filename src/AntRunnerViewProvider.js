@@ -296,6 +296,23 @@ module.exports = class AntRunnerViewProvider {
     return true
   }
 
+  revealDefinition (target) {
+    vscode.workspace.openTextDocument(path.join(this.rootPath, 'build.xml'))
+      .then((document) => {
+        return vscode.window.showTextDocument(document)
+      })
+      .then((textEditor) => {
+        // find the line
+        let text = textEditor.document.getText()
+        let regexp = new RegExp('target[.\\s]+name[\\s]*=["\']' + target.name + '["\']', 'gm')
+        let offset = regexp.exec(text)
+        if (offset) {
+          let position = textEditor.document.positionAt(offset.index)
+          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
+        }
+      })
+  }
+
   selectedAntTarget (target) {
     selectedAntTarget = target
   }

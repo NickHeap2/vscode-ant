@@ -13,6 +13,9 @@ function activate (context) {
   var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antRunnerViewProvider.runAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(runAntTarget)
 
+  var revealDefinition = vscode.commands.registerCommand('vscode-ant.revealDefinition', antRunnerViewProvider.revealDefinition.bind(antRunnerViewProvider))
+  context.subscriptions.push(revealDefinition)
+
   var runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antRunnerViewProvider.runAntTarget.bind(antRunnerViewProvider))
   context.subscriptions.push(runAntDependency)
 

@@ -1,6 +1,6 @@
 # Ant Target Runner for Visual Studio Code
 
-A simple ant extension that parses build.xml in the root directory and allows you to easily run them.
+A simple ant extension that parses build.xml in the root directory and allows you to easily run the targets or reveal their definitions.
 
 ## Features
 
@@ -16,6 +16,10 @@ A simple ant extension that parses build.xml in the root directory and allows yo
 ![Change tracking](/resources/tracking.gif "Change tracking")
 
 - Will load env vars from build.env (configurable) and pass them into ant.
+
+![Reveal definition](/resources/reveal.gif "Reveal definition")
+
+- Reveal target line definition in build.xml.
 
 ## Requirements
 
@@ -38,7 +42,6 @@ Only works for build.xml in the root folder at the moment.
 
 Fixed the behaviour when starting with a workspace with no folders. Changed the activation of the extension to be when the view is first opened. Added toolbar button to run the currently selected target.
 
-## [0.0.6] - 2018-04-15
-### Fixed
-- Correct docs for config name.
-- Fix context menu run.
+## [0.0.7] - 2018-04-20
+### Added
+- Add reveal target line definition.
