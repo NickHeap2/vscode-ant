@@ -15,11 +15,11 @@ A simple ant extension that parses build.xml in the root directory and allows yo
 
 ![Change tracking](/resources/tracking.gif "Change tracking")
 
-- Will load env vars from build.env (configurable) and pass them into ant.
+- Reveal target line definition in build.xml.
 
 ![Reveal definition](/resources/reveal.gif "Reveal definition")
 
-- Reveal target line definition in build.xml.
+- Will load env vars from build.env (configurable) and pass them into ant.
 
 ## Requirements
 
