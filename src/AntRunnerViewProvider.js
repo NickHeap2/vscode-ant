@@ -11,6 +11,7 @@ var antHome
 var envVarsFile
 var antExecutable
 var sortTargetsAlphabetically
+var ansiconExe
 
 var extensionContext
 var project
@@ -67,6 +68,12 @@ module.exports = class AntRunnerViewProvider {
     envVarsFile = configOptions.get('envVarsFile', 'build.env')
     antExecutable = configOptions.get('executable', 'ant')
     sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
+    ansiconExe = configOptions.get('ansiconExe', '')
+
+    if (antTerminal) {
+      antTerminal.dispose()
+      antTerminal = null
+    }
   }
 
   refresh () {
@@ -340,7 +347,16 @@ module.exports = class AntRunnerViewProvider {
         envVars.ANT_HOME = antHome
       }
 
-      antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
+      // use ansicon on win32?
+      if (process.platform === 'win32' && ansiconExe && this.pathExists(ansiconExe)) {
+        if (envVars.ANT_ARGS === undefined) {
+          envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
+        }
+
+        antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: ansiconExe, shellArgs: [ vscode.workspace.getConfiguration('terminal.integrated.shell').windows ]})
+      } else {
+        antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
+      }
     }
 
     antTerminal.sendText(`${antExecutable} ${target}`)
@@ -365,6 +381,7 @@ module.exports = class AntRunnerViewProvider {
 
   terminalClosed (terminal) {
     if (terminal.name === antTerminal.name) {
+      antTerminal.dispose()
       antTerminal = null
     }
   }

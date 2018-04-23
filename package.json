@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -138,6 +138,11 @@
                     "type": "boolean",
                     "default": "true",
                     "description": "Sort targets alphabetically."
+                },
+                "ant.ansiconExe": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to ansicon .exe for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
                 }
             }
         }

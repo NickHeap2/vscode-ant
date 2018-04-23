@@ -59,4 +59,11 @@
 
   </target>
 
+  <target name="output_test">
+    <echo message="This is an error." level="error"/>
+    <echo message="This is an warning." level="warning"/>
+    <echo message="This is an info." level="info"/>
+    <echo message="This is an verbose." level="verbose"/>
+    <echo message="This is an debug." level="debug"/>
+  </target>
 </project>
