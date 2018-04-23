@@ -19,6 +19,10 @@ A simple ant extension that parses build.xml in the root directory and allows yo
 
 ![Reveal definition](/resources/reveal.gif "Reveal definition")
 
+- Colorized ant output on windows using ansicon (https://github.com/adoxa/ansicon).
+
+![Reveal definition](/resources/ansicon.gif "Colorized output")
+
 - Will load env vars from build.env (configurable) and pass them into ant.
 
 ## Requirements
@@ -33,6 +37,7 @@ This extension contributes the following settings:
 * `ant.home`: if set will set ANT_HOME env in terminal to this value. Default is blank.
 * `ant.sortTargetsAlphabetically`: should the targets be sorted alphabetically by default? Default is true.
 * `ant.envVarsFile`: file name to load env vars from to pass to ant. Default is build.env.
+* `ant.ansiconExe`: Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases).
 
 ## Known Issues
 
@@ -40,8 +45,9 @@ Only works for build.xml in the root folder at the moment.
 
 ## Release Notes
 
-Fixed the behaviour when starting with a workspace with no folders. Changed the activation of the extension to be when the view is first opened. Added toolbar button to run the currently selected target.
+Added colorized output for windows using ansicon. Download from (https://github.com/adoxa/ansicon/releases).
+Note that v1.83 is currently false positiving as a virus with Windows Defender but v1.82 is fine. 
 
-## [0.0.7] - 2018-04-20
+## [0.0.8] - 2018-04-23
 ### Added
-- Add reveal target line definition.
+- Add ansicon support for windows (https://github.com/adoxa/ansicon) to colorize output.

@@ -142,7 +142,7 @@
                 "ant.ansiconExe": {
                     "type": "string",
                     "default": "",
-                    "description": "Path to ansicon .exe for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
+                    "description": "Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
                 }
             }
         }

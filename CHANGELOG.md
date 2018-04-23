@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.8] - 2018-04-23
+### Added
+- Add ansicon support for windows (https://github.com/adoxa/ansicon) to colorize output.
+
 ## [0.0.7] - 2018-04-20
 ### Added
 - Add reveal target line definition.
