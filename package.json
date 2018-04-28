@@ -25,7 +25,6 @@
     ],
     "activationEvents": [
         "onView:antRunnerView",
-        "workspaceContains:build.xml",
         "workspaceContains:build.auto"
     ],
     "main": "./src/extension",
