@@ -1,34 +1,40 @@
 const vscode = require('vscode')
 const fs = require('fs')
-const path = require('path')
 const xml2js = require('xml2js')
 const _ = require('lodash')
-const dotenv = require('dotenv')
+const util = require('./util')
+const path = require('path')
 
-var antTerminal
 var configOptions
-var antHome
-var envVarsFile
-var antExecutable
-var sortTargetsAlphabetically
-var ansiconExe
 
 var extensionContext
 var project
 var selectedAntTarget
 
-module.exports = class AntRunnerViewProvider {
+module.exports = class AntTreeDataProvider {
   constructor (context) {
     extensionContext = context
+
+    this.targetRunner = null
+
     var workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders) {
       this.watchBuildXml(workspaceFolders)
     }
 
+    // xml parser for build.xml file
     this._parser = new xml2js.Parser()
 
+    // event for notify of change of data
     this._onDidChangeTreeData = new vscode.EventEmitter()
     this.onDidChangeTreeData = this._onDidChangeTreeData.event
+
+    // trap config and workspaces changes to pass updates
+    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    extensionContext.subscriptions.push(onDidChangeConfiguration)
+
+    var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
+    extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
 
     this.getConfigOptions()
   }
@@ -48,32 +54,23 @@ module.exports = class AntRunnerViewProvider {
   watchBuildXml (workspaceFolders) {
     this.rootPath = workspaceFolders[0].uri.fsPath
 
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(path.join(this.rootPath, 'build.xml'))
+    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(util.getRootFile(this.rootPath, 'build.xml'))
     extensionContext.subscriptions.push(fileSystemWatcher)
 
     fileSystemWatcher.onDidChange(() => {
       this._onDidChangeTreeData.fire()
-    })
+    }, this, extensionContext.subscriptions)
     fileSystemWatcher.onDidDelete(() => {
       this._onDidChangeTreeData.fire()
-    })
+    }, this, extensionContext.subscriptions)
     fileSystemWatcher.onDidCreate(() => {
       this._onDidChangeTreeData.fire()
-    })
+    }, this, extensionContext.subscriptions)
   }
 
   getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant')
-    antHome = configOptions.get('home', '')
-    envVarsFile = configOptions.get('envVarsFile', 'build.env')
-    antExecutable = configOptions.get('executable', 'ant')
-    sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
-    ansiconExe = configOptions.get('ansiconExe', '')
-
-    if (antTerminal) {
-      antTerminal.dispose()
-      antTerminal = null
-    }
+    this.sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
   }
 
   refresh () {
@@ -208,8 +205,8 @@ module.exports = class AntRunnerViewProvider {
 
   getRoots () {
     return new Promise((resolve, reject) => {
-      var buildXml = path.join(this.rootPath, 'build.xml')
-      if (this.pathExists(buildXml)) {
+      var buildXml = util.getRootFile(this.rootPath, 'build.xml')
+      if (util.pathExists(buildXml)) {
         fs.readFile(buildXml, 'utf-8', (err, data) => {
           if (err) {
             vscode.window.showInformationMessage('Error reading build.xml!')
@@ -293,78 +290,18 @@ module.exports = class AntRunnerViewProvider {
     })
   }
 
-  pathExists (p) {
-    try {
-      fs.accessSync(p)
-    } catch (err) {
-      return false
-    }
-
-    return true
-  }
-
-  revealDefinition (target) {
-    vscode.workspace.openTextDocument(path.join(this.rootPath, 'build.xml'))
-      .then((document) => {
-        return vscode.window.showTextDocument(document)
-      })
-      .then((textEditor) => {
-        // find the line
-        let text = textEditor.document.getText()
-        let regexp = new RegExp('target[.\\s]+name[\\s]*=["\']' + target.name + '["\']', 'gm')
-        let offset = regexp.exec(text)
-        if (offset) {
-          let position = textEditor.document.positionAt(offset.index)
-          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
-        }
-      })
-  }
-
   selectedAntTarget (target) {
     selectedAntTarget = target
   }
 
   runSelectedAntTarget () {
-    if (selectedAntTarget) {
-      this.runAntTarget({name: selectedAntTarget})
+    if (selectedAntTarget && this.targetRunner) {
+      this.targetRunner.runAntTarget({name: selectedAntTarget})
     }
-  }
-
-  runAntTarget (context) {
-    if (!context) {
-      return
-    }
-
-    var target = context.name
-
-    if (!antTerminal) {
-      var envVars
-      if (envVarsFile && this.pathExists(path.join(this.rootPath, envVarsFile))) {
-        envVars = dotenv.parse(fs.readFileSync(path.join(this.rootPath, envVarsFile)))
-      }
-
-      if (antHome) {
-        envVars.ANT_HOME = antHome
-      }
-
-      // use ansicon on win32?
-      if (process.platform === 'win32' && ansiconExe && this.pathExists(ansiconExe)) {
-        if (envVars.ANT_ARGS === undefined) {
-          envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
-        }
-
-        antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: ansiconExe, shellArgs: [ vscode.workspace.getConfiguration('terminal.integrated.shell').windows ]})
-      } else {
-        antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
-      }
-    }
-
-    antTerminal.sendText(`${antExecutable} ${target}`)
-    antTerminal.show()
   }
 
   _sort (nodes) {
-    if (!sortTargetsAlphabetically) {
+    if (!this.sortTargetsAlphabetically) {
       return nodes
     }
 
@@ -377,12 +314,5 @@ module.exports = class AntRunnerViewProvider {
         return 0
       }
     })
-  }
-
-  terminalClosed (terminal) {
-    if (terminal.name === antTerminal.name) {
-      antTerminal.dispose()
-      antTerminal = null
-    }
   }
 }

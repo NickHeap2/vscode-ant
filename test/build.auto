@@ -1,0 +1,14 @@
+{ 
+  "autotargets": [ 
+    { 
+      "watch": "**/*.{p,w,i,cls}",
+      "target": "compile",
+      "delay": 1000
+    }, 
+    { 
+      "watch": "**/*.test",
+      "target": "test",
+      "delay": 1000
+    } 
+  ] 
+}

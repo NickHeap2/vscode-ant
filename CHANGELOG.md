@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.0.9] - 2018-04-23
+### Added
+- Auto run triggering with configurable delay to prevent duplicates.
+
+### Fixed
+- Don't change focus to terminal on target run.
+
 ## [0.0.8] - 2018-04-23
 ### Added
 - Add ansicon support for windows (https://github.com/adoxa/ansicon) to colorize output.
