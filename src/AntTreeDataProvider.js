@@ -209,12 +209,12 @@ module.exports = class AntTreeDataProvider {
       if (util.pathExists(buildXml)) {
         fs.readFile(buildXml, 'utf-8', (err, data) => {
           if (err) {
-            vscode.window.showInformationMessage('Error reading build.xml!')
+            vscode.window.showErrorMessage('Error reading build.xml!')
             reject(new Error('Error reading build.xml!: ' + err))
           }
           this._parser.parseString(data, (err, result) => {
             if (err) {
-              vscode.window.showInformationMessage('Error parsing build.xml!')
+              vscode.window.showErrorMessage('Error parsing build.xml!')
               reject(new Error('Error parsing build.xml!:' + err))
             } else {
               vscode.window.showInformationMessage('Targets loaded from build.xml!')

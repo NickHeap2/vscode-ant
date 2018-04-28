@@ -39,6 +39,15 @@
 
   </target>
 
+  <target name="compile_foldertest" depends="start_databases">
+    <echo message="All the foldertest things are compiled!"/>
+
+
+
+
+
+  </target>
+
   <target
     name="test"
     depends="compile">

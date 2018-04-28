@@ -1,14 +1,19 @@
-{ 
-  "autotargets": [ 
-    { 
-      "watch": "**/*.{p,w,i,cls}",
-      "target": "compile",
-      "delay": 1000
-    }, 
-    { 
-      "watch": "**/*.test",
-      "target": "test",
-      "delay": 1000
+{
+  "autoTargets": [
+    {
+      "filePattern": "src/foldertest/**/*.{p,w,i,cls}",
+      "runTargets": "compile_foldertest",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.{p,w,i,cls}",
+      "runTargets": "compile",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.test",
+      "runTargets": "test",
+      "initialDelayMs": 1000
     } 
   ] 
 }

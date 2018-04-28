@@ -1,9 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
-## [0.0.9] - 2018-04-23
+## [0.1.0] - 2018-04-28
 ### Added
-- Auto run triggering with configurable delay to prevent duplicates.
+- Refactored most code.
+- Auto run triggering via build.auto file with configurable delay to prevent duplicates.
 
 ### Fixed
 - Don't change focus to terminal on target run.

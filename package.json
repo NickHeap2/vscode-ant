@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Ant Target Runner",
-    "version": "0.0.9",
+    "version": "0.1.0",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -161,6 +161,7 @@
     "dependencies": {
         "dotenv": "^5.0.1",
         "lodash": "^4.17.5",
+        "minimatch": "^3.0.4",
         "xml2js": "^0.4.19"
     }
 }

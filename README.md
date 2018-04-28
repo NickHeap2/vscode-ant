@@ -1,6 +1,7 @@
 # Ant Target Runner for Visual Studio Code
 
-A simple ant extension that parses build.xml in the root directory and allows you to easily run the targets or reveal their definitions.
+An ant extension that parses build.xml in the root directory and allows you to easily run the targets or reveal their definitions.
+Ant build output can be colorized, environment variables can be set and targets can be automatically run on changes in the file system.
 
 ## Features
 
@@ -23,13 +24,20 @@ A simple ant extension that parses build.xml in the root directory and allows yo
 
 ![Reveal definition](/resources/ansicon.gif "Colorized output")
 
+- Auto targets allow targets to be run on file system changes with configurable delay.
+
+![Reveal definition](/resources/autotarget.gif "Auto targets")
+
 - Will load env vars from build.env (configurable) and pass them into ant.
 
 ## Requirements
 
-For this release the extension requires that your ant build xml file be in the root directory and be called build.xml.
+For this release the extension requires:
+- Your ant build xml file should be in the root directory and be called build.xml.
+- Any environment variables file should be in the root directory and be called build.env.
+- Any auto target file should be in the root directory and be called build.auto.
 
-## Extension Settings
+## Extension Settings & Configuration files
 
 This extension contributes the following settings:
 
@@ -39,15 +47,50 @@ This extension contributes the following settings:
 * `ant.envVarsFile`: file name to load env vars from to pass to ant. Default is build.env.
 * `ant.ansiconExe`: Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases).
 
-## Known Issues
+The build.env should be in standard property file format like this:
+```
+ENV_VAR1=my setting
+ENV_VAR2=C:\some\path
+```
 
-Only works for build.xml in the root folder at the moment.
+The autoTarget file build.auto should be in the json format below:
+```json
+{
+  "autoTargets": [
+    {
+      "filePattern": "src/foldertest/**/*.{p,w,i,cls}",
+      "runTargets": "compile_foldertest",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.{p,w,i,cls}",
+      "runTargets": "compile",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.test",
+      "runTargets": "compile test",
+      "initialDelayMs": 5000
+    } 
+  ] 
+}
+```
+
+## Known Limitations
+
+Only works for build.xml, build.env & build.auto in the root folder at the moment.
 
 ## Release Notes
 
-Added colorized output for windows using ansicon. Download from (https://github.com/adoxa/ansicon/releases).
-Note that v1.83 is currently false positiving as a virus with Windows Defender but v1.82 is fine. 
+Added auto target run functionality via build.auto file.
+Will wait a configurable time for other changes before running to prevent duplicates.
+Auto targets are processed top down so you can have an exception match first even if the same file is matched in a later auto target.
+Change to not set focus into terminal on target run to better support auto run targets.
 
-## [0.0.8] - 2018-04-23
+## [0.1.0] - 2018-04-28
 ### Added
-- Add ansicon support for windows (https://github.com/adoxa/ansicon) to colorize output.
+- Refactored most code.
+- Auto run triggering via build.auto file with configurable delay to prevent duplicates.
+
+### Fixed
+- Don't change focus to terminal on target run.

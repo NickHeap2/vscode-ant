@@ -1,6 +1,7 @@
 const fs = require('fs')
 const vscode = require('vscode')
 const util = require('./util')
+const minimatch = require('minimatch')
 
 var extensionContext
 var autoFile
@@ -11,6 +12,7 @@ module.exports = class AutoTargetRunner {
 
     this.targetRunner = targetRunner
     this.autoRunTasks = []
+    this.autoTargets = []
 
     this.getConfigOptions()
 
@@ -27,30 +29,24 @@ module.exports = class AutoTargetRunner {
   }
 
   getConfigOptions () {
-    let configOptions = vscode.workspace.getConfiguration('ant')
-    this.autoRunDelay = parseInt(configOptions.get('autoRunDelay', '1000'))
   }
 
-  autoRunTarget (target, delay, context) {
-    console.log(new Date().getMilliseconds())
-    console.log(context.fsPath)
-    console.log(target)
-    console.log(delay)
-    if (this.autoRunTasks[target]) {
-      console.log('Clearing entry for:' + target)
+  autoRunTarget (targets, delay, context) {
+    if (this.autoRunTasks[targets]) {
+      // console.log('Clearing entry for:' + targets)
       try {
-        clearTimeout(this.autoRunTasks[target])
+        clearTimeout(this.autoRunTasks[targets])
       } catch (err) {
         console.log(err)
       }
-      this.autoRunTasks[target] = undefined
+      this.autoRunTasks[targets] = undefined
     }
-    console.log('Queueing entry for:' + target)
-    this.autoRunTasks[target] = setTimeout(() => {
-      console.log('Running entry for:' + target)
-      this.autoRunTasks[target] = undefined
-      this.targetRunner.runAntTarget({name: target})
-    }, delay, target)
+    // console.log('Queueing entry for:' + targets)
+    this.autoRunTasks[targets] = setTimeout(() => {
+      // console.log('Running entry for:' + targets)
+      this.autoRunTasks[targets] = undefined
+      this.targetRunner.runAntTarget({name: targets})
+    }, delay, targets)
   }
 
   watchAutoTargetsFile () {
@@ -74,6 +70,7 @@ module.exports = class AutoTargetRunner {
       for (const autotarget of this.autoTargets) {
         if (autotarget.autoFileWatcher) {
           autotarget.autoFileWatcher.dispose()
+          autotarget.autoFileWatcher = undefined
         }
       }
     }
@@ -94,34 +91,42 @@ module.exports = class AutoTargetRunner {
           obj = JSON.parse(data)
         } catch (err) {
           console.log(err)
-          vscode.window.showInformationMessage('Error parsing build.auto for autotargets!')
+          vscode.window.showErrorMessage('Error parsing build.auto for autotargets!')
           return
         }
-        this.autoTargets = obj.autotargets
+        this.autoTargets = obj.autoTargets
 
         if (this.autoTargets) {
           vscode.window.showInformationMessage('Parsed build.auto for autotargets.')
-          for (const autotarget of this.autoTargets) {
-            let relativePattern = new vscode.RelativePattern(this.rootPath, autotarget.watch)
-            autotarget.autoFileWatcher = vscode.workspace.createFileSystemWatcher(relativePattern)
-            extensionContext.subscriptions.push(autotarget.autoFileWatcher)
+          for (const autoTarget of this.autoTargets) {
+            let relativePattern = new vscode.RelativePattern(this.rootPath, autoTarget.filePattern)
+            autoTarget.autoFileWatcher = vscode.workspace.createFileSystemWatcher(relativePattern)
+            extensionContext.subscriptions.push(autoTarget.autoFileWatcher)
 
-            // autoFileWatcher.onDidChange(this.OnDidChangeAutoTarget, this, extensionContext.subscriptions)
-            // autoFileWatcher.onDidDelete(this.OnDidChangeAutoTarget, this, extensionContext.subscriptions)
-            // autoFileWatcher.onDidCreate(this.OnDidChangeAutoTarget, this, extensionContext.subscriptions)
-            autotarget.autoFileWatcher.onDidChange((context) => {
-              this.autoRunTarget(autotarget.target, autotarget.delay, context)
+            autoTarget.autoFileWatcher.onDidChange((context) => {
+              this.autoTargetChange(context)
             }, this, extensionContext.subscriptions)
-            autotarget.autoFileWatcher.onDidDelete((context) => {
-              this.autoRunTarget(autotarget.target, autotarget.delay, context)
+            autoTarget.autoFileWatcher.onDidDelete((context) => {
+              this.autoTargetChange(context)
             }, this, extensionContext.subscriptions)
-            autotarget.autoFileWatcher.autoFileWatchereWatcher.onDidCreate((context) => {
-              this.autoRunTarget(autotarget.target, autotarget.delay, context)
+            autoTarget.autoFileWatcher.onDidCreate((context) => {
+              this.autoTargetChange(context)
             }, this, extensionContext.subscriptions)
           }
         }
       })
     }
-    // this.watchAutoTarget(workspaceFolders)
+  }
+
+  autoTargetChange (context) {
+    var relativePath = context.fsPath.replace(this.rootPath, '').substring(1)
+
+    // find first match so we can have cascaded watchers
+    for (const autoTarget of this.autoTargets) {
+      if (minimatch(relativePath, autoTarget.filePattern)) {
+        this.autoRunTarget(autoTarget.runTargets, autoTarget.initialDelayMs, context)
+        break
+      }
+    }
   }
 }
