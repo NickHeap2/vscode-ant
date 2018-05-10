@@ -11,7 +11,7 @@
         "url": "https://github.com/NickHeap/vscode-ant"
     },
     "displayName": "Ant Target Runner",
-    "description": "Ant Target Runner",
+    "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
     "version": "0.1.0",
     "publisher": "nickheap",
     "engines": {
@@ -153,15 +153,15 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^7.0.64",
         "eslint": "^4.11.0",
-        "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^2.8.3",
+        "vscode": "^1.1.17"
     },
     "dependencies": {
         "dotenv": "^5.0.1",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.10",
         "minimatch": "^3.0.4",
         "xml2js": "^0.4.19"
     }
