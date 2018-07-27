@@ -70,7 +70,7 @@ module.exports = class AntTargetRunner {
       }
     }
 
-    this.antTerminal.sendText(`${this.antExecutable} ${target}`)
+    this.antTerminal.sendText(`${this.antExecutable} \"${target}\"`)
     this.antTerminal.show(true)
   }
 
