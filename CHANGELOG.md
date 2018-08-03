@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.1] - 2018-08-03
+### Added
+- Update dependencies.
+
+### Fixed
+- Fixed calling ant build on targets that have spaces in the name (pull request from katoun).
+
 ## [0.1.0] - 2018-04-28
 ### Added
 - Refactored most code.

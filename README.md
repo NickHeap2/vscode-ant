@@ -82,15 +82,12 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 ## Release Notes
 
-Added auto target run functionality via build.auto file.
-Will wait a configurable time for other changes before running to prevent duplicates.
-Auto targets are processed top down so you can have an exception match first even if the same file is matched in a later auto target.
-Change to not set focus into terminal on target run to better support auto run targets.
+Updated dependencies to remove security warnings.
+Merged pull request from katoun that fixes calling ant build on targets that have spaces in the name.
 
-## [0.1.0] - 2018-04-28
+## [0.1.1] - 2018-08-03
 ### Added
-- Refactored most code.
-- Auto run triggering via build.auto file with configurable delay to prevent duplicates.
+- Update dependencies.
 
 ### Fixed
-- Don't change focus to terminal on target run.
+- Fixed calling ant build on targets that have spaces in the name (pull request from katoun).
