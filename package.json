@@ -153,14 +153,13 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.42",
-        "@types/node": "^7.0.64",
-        "eslint": "^4.11.0",
-        "typescript": "^2.8.3",
-        "vscode": "^1.1.17"
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^10.5.5",
+        "eslint": "^5.2.0",
+        "vscode": "^1.1.18"
     },
     "dependencies": {
-        "dotenv": "^5.0.1",
+        "dotenv": "^6.0.0",
         "lodash": "^4.17.10",
         "minimatch": "^3.0.4",
         "xml2js": "^0.4.19"
