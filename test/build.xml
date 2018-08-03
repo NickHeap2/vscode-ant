@@ -3,6 +3,10 @@
 
   <target name="default" depends="clean,compile,test,dist"/>
 
+  <target name="fold space" description="Fold space">
+    <echo message="Folding space..."/>
+  </target>
+
   <target name="dlc" description="Show dlc!">
     <echo message="${env.DLC}"/>
 
