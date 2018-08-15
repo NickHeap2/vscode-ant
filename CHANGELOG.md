@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.2] - 2018-08-16
+### Added
+- Update vscode to fix vulnerability.
+
 ## [0.1.1] - 2018-08-03
 ### Added
 - Update dependencies.

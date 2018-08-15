@@ -82,12 +82,8 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 ## Release Notes
 
-Updated dependencies to remove security warnings.
-Merged pull request from katoun that fixes calling ant build on targets that have spaces in the name.
+Updated vscode to fix a severe vulnerability in one of its dependencies.
 
-## [0.1.1] - 2018-08-03
+## [0.1.2] - 2018-08-16
 ### Added
-- Update dependencies.
-
-### Fixed
-- Fixed calling ant build on targets that have spaces in the name (pull request from katoun).
+- Update vscode to fix vulnerability.

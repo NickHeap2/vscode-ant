@@ -3,16 +3,16 @@
     "author": {
         "name": "Nick Heap",
         "email": "nickheap@gmail.com",
-        "url": "https://github.com/NickHeap"
+        "url": "https://github.com/NickHeap2"
     },
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/NickHeap/vscode-ant"
+        "url": "https://github.com/NickHeap2/vscode-ant"
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -156,7 +156,7 @@
         "@types/mocha": "^5.2.5",
         "@types/node": "^10.5.5",
         "eslint": "^5.2.0",
-        "vscode": "^1.1.18"
+        "vscode": "^1.1.21"
     },
     "dependencies": {
         "dotenv": "^6.0.0",
