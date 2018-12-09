@@ -84,6 +84,6 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 Updated vscode to fix a severe vulnerability in one of its dependencies.
 
-## [0.1.2] - 2018-08-16
-### Added
-- Update vscode to fix vulnerability.
+## [0.1.3] - 2018-12-09
+### Fixed
+- Fixed error on running target when an env var file is defined but doesn't exist.

@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.3] - 2018-12-09
+### Fixed
+- Fixed error on running target when an env var file is defined but doesn't exist.
+
 ## [0.1.2] - 2018-08-16
 ### Added
 - Update vscode to fix vulnerability.

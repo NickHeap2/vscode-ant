@@ -49,7 +49,7 @@ module.exports = class AntTargetRunner {
     var target = context.name
 
     if (!this.antTerminal) {
-      var envVars
+      var envVars = {}
       if (this.envVarsFile && util.pathExists(util.getRootFile(this.rootPath, this.envVarsFile))) {
         envVars = dotenv.parse(fs.readFileSync(util.getRootFile(this.rootPath, this.envVarsFile)))
       }
