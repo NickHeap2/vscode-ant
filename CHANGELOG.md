@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.4] - 2019-06-17
+### Fixed
+- Fixed error where console wouldn't launch if terminal.integrated.shell.windows is null.
+
 ## [0.1.3] - 2018-12-09
 ### Fixed
 - Fixed error on running target when an env var file is defined but doesn't exist.

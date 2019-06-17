@@ -82,8 +82,8 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 ## Release Notes
 
-Updated vscode to fix a severe vulnerability in one of its dependencies.
+Fix issue where console wouldn't launch if teh terminal.integrated.shell.windows settings was null.
 
-## [0.1.3] - 2018-12-09
+## [0.1.4] - 2019-06-17
 ### Fixed
-- Fixed error on running target when an env var file is defined but doesn't exist.
+- Fixed error where console wouldn't launch if terminal.integrated.shell.windows is null.
