@@ -63,14 +63,18 @@ module.exports = class AntTargetRunner {
         if (envVars.ANT_ARGS === undefined) {
           envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
         }
-
-        this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe, shellArgs: [ vscode.workspace.getConfiguration('terminal.integrated.shell').windows ]})
+        let integratedShell = vscode.workspace.getConfiguration('terminal.integrated.shell').windows
+        if (integratedShell) {
+          this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe, shellArgs: [ integratedShell ]})
+        } else {
+          this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe})
+        }
       } else {
         this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
       }
     }
 
-    this.antTerminal.sendText(`${this.antExecutable} \"${target}\"`)
+    this.antTerminal.sendText(`${this.antExecutable} "${target}"`)
     this.antTerminal.show(true)
   }
 
