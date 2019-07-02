@@ -296,7 +296,11 @@ module.exports = class AntTreeDataProvider {
 
   runSelectedAntTarget () {
     if (selectedAntTarget && this.targetRunner) {
-      this.targetRunner.runAntTarget({name: selectedAntTarget})
+      var target = selectedAntTarget
+      if (target.indexOf(' ') >= 0) {
+        target = '"' + target + '"'
+      }
+      this.targetRunner.runAntTarget({name: target})
     }
   }
 

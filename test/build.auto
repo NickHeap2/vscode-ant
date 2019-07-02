@@ -7,7 +7,7 @@
     },
     {
       "filePattern": "**/*.{p,w,i,cls}",
-      "runTargets": "compile",
+      "runTargets": "\"fold space\" compile test",
       "initialDelayMs": 1000
     },
     {
