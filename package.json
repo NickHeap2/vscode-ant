@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -155,11 +155,11 @@
         "lint": "eslint src"
     },
     "devDependencies": {
-        "chai": "^4.2.0",
         "@types/mocha": "^5.2.6",
         "@types/node": "^12.0.2",
+        "chai": "^4.2.0",
         "eslint": "^5.16.0",
-        "vscode": "^1.1.34"
+        "vscode": "^1.1.35"
     },
     "dependencies": {
         "dotenv": "^8.0.0",
@@ -168,6 +168,9 @@
         "xml2js": "^0.4.19"
     },
     "standard": {
-      "env": [ "mocha", "chai" ]
+        "env": [
+            "mocha",
+            "chai"
+        ]
     }
 }

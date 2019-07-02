@@ -90,6 +90,11 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 Fix issue where having multiple auto targets separated by spaces wouldn't run after change to surround targets by quotes.
 Quotes are now only added when running a selected target from the tree that contains a space and not for auto targets. To use targets with spaces in auto targets you need to surround it with escaped quotes (\").
+Updated dependencies.
+
+## [0.1.6] - 2019-07-02
+### Added
+- Update dependencies.
 
 ## [0.1.5] - 2019-07-02
 ### Fixed

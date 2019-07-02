@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.6] - 2019-07-02
+### Added
+- Update dependencies.
+
 ## [0.1.5] - 2019-07-02
 ### Fixed
 - Fixed error where space separated auto targets are surrounded by quotes.
