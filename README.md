@@ -33,6 +33,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 ## Requirements
 
 For this release the extension requires:
+- You need to point the extension at an existing ant install (using `ant.executable`).
 - Your ant build xml file should be in the root directory and be called build.xml.
 - Any environment variables file should be in the root directory and be called build.env.
 - Any auto target file should be in the root directory and be called build.auto.
@@ -71,8 +72,13 @@ The autoTarget file build.auto should be in the json format below:
       "filePattern": "**/*.test",
       "runTargets": "compile test",
       "initialDelayMs": 5000
-    } 
-  ] 
+    },
+    {
+      "filePattern": "**/*.spacetest",
+      "runTargets": "\"space test\" test",
+      "initialDelayMs": 2000
+    }
+  ]
 }
 ```
 
@@ -82,8 +88,9 @@ Only works for build.xml, build.env & build.auto in the root folder at the momen
 
 ## Release Notes
 
-Fix issue where console wouldn't launch if teh terminal.integrated.shell.windows settings was null.
+Fix issue where having multiple auto targets separated by spaces wouldn't run after change to surround targets by quotes.
+Quotes are now only added when running a selected target from the tree that contains a space and not for auto targets. To use targets with spaces in auto targets you need to surround it with escaped quotes (\").
 
-## [0.1.4] - 2019-06-17
+## [0.1.5] - 2019-07-02
 ### Fixed
-- Fixed error where console wouldn't launch if terminal.integrated.shell.windows is null.
+- Fixed error where space separated auto targets are surrounded by quotes.

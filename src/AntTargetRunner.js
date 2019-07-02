@@ -46,7 +46,7 @@ module.exports = class AntTargetRunner {
       return
     }
 
-    var target = context.name
+    var targets = context.name
 
     if (!this.antTerminal) {
       var envVars = {}
@@ -74,7 +74,7 @@ module.exports = class AntTargetRunner {
       }
     }
 
-    this.antTerminal.sendText(`${this.antExecutable} "${target}"`)
+    this.antTerminal.sendText(`${this.antExecutable} ${targets}`)
     this.antTerminal.show(true)
   }
 

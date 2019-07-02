@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.1.5] - 2019-07-02
+### Fixed
+- Fixed error where space separated auto targets are surrounded by quotes.
+
 ## [0.1.4] - 2019-06-17
 ### Fixed
 - Fixed error where console wouldn't launch if terminal.integrated.shell.windows is null.
