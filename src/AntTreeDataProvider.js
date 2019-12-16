@@ -58,6 +58,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   watchBuildFile (buildFileName) {
+    console.debug(`watching file: ${filehelper.getRootFile(this.rootPath, buildFileName)}`)
     var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, buildFileName))
     this.extensionContext.subscriptions.push(fileSystemWatcher)
 
@@ -104,10 +105,13 @@ module.exports = class AntTreeDataProvider {
     }
   }
 
+  removeSubscription (item) {
+    this.extensionContext.subscriptions.splice(this.extensionContext.subscriptions.indexOf(item), 1)
+  }
+
   refresh () {
     // remove subscriptions
     for (const fileSystemWatcher of this.fileSystemWatchers) {
-      this.extensionContext.subscriptions.splice(this.extensionContext.subscriptions.indexOf(fileSystemWatcher), 1)
       fileSystemWatcher.dispose()
     }
     this.fileSystemWatchers = []
@@ -260,11 +264,11 @@ module.exports = class AntTreeDataProvider {
 
       try {
         var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var buildTargets = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [])
+        var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
         vscode.window.showInformationMessage('Targets loaded from build.xml!')
 
-        const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
+        // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
           this.watchBuildFile(buildSourceFile)
         }

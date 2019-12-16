@@ -45,7 +45,7 @@ module.exports = class AntTreeDataProvider {
     return project
   }
 
-  getImportTargets (antImportFile, existingTargets) {
+  getImportTargets (antImportFile, existingTargets, existingSourceFiles) {
     return new Promise(async (resolve, reject) => {
       try {
         var importFileContents = await this.parseBuildFile(antImportFile)
@@ -54,15 +54,15 @@ module.exports = class AntTreeDataProvider {
       }
 
       try {
-        existingTargets = await this.getTargets(antImportFile, importFileContents, existingTargets)
+        [existingTargets, existingSourceFiles] = await this.getTargets(antImportFile, importFileContents, existingTargets, existingSourceFiles)
       } catch (error) {
         return reject(error)
       }
-      return resolve(existingTargets)
+      return resolve([existingTargets, existingSourceFiles])
     })
   }
 
-  getTargets (fileName, fileContents, existingTargets) {
+  getTargets (fileName, fileContents, existingTargets, existingSourceFiles) {
     return new Promise(async (resolve, reject) => {
       // get imports
       if (fileContents.project.import) {
@@ -74,7 +74,7 @@ module.exports = class AntTreeDataProvider {
         })
         for (const antImport of antImports) {
           try {
-            existingTargets = await this.getImportTargets(path.join(path.dirname(fileName), antImport.file), existingTargets)
+            [existingTargets, existingSourceFiles] = await this.getImportTargets(path.join(path.dirname(fileName), antImport.file), existingTargets, existingSourceFiles)
           } catch (error) {
             return reject(new Error(`Error importing ${antImport}!: ` + error))
           }
@@ -95,7 +95,7 @@ module.exports = class AntTreeDataProvider {
           return antTarget
         })
       }
-      return resolve(existingTargets.concat(targets))
+      return resolve([existingTargets.concat(targets), existingSourceFiles.concat(fileName)])
     })
   }
 
