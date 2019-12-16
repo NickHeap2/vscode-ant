@@ -144,6 +144,16 @@
                     "type": "string",
                     "default": "",
                     "description": "Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
+                },
+                "ant.buildFilenames": {
+                    "type": "string",
+                    "default": "build.xml",
+                    "description": "Comma seperated list of file names to check for build file."
+                },
+                "ant.buildFileDirectories": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Comma seperated list of directories to check for build files."
                 }
             }
         }
@@ -159,13 +169,13 @@
         "@types/node": "^12.0.2",
         "chai": "^4.2.0",
         "eslint": "^5.16.0",
-        "vscode": "^1.1.35"
+        "vscode": "^1.1.36"
     },
     "dependencies": {
-        "dotenv": "^8.0.0",
+        "dotenv": "^8.2.0",
         "lodash": "^4.17.13",
         "minimatch": "^3.0.4",
-        "xml2js": "^0.4.19"
+        "xml2js": "^0.4.22"
     },
     "standard": {
         "env": [

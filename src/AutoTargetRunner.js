@@ -1,6 +1,6 @@
 const fs = require('fs')
 const vscode = require('vscode')
-const util = require('./util')
+const util = require('./filehelper')
 const minimatch = require('minimatch')
 
 var extensionContext
@@ -17,7 +17,9 @@ module.exports = class AutoTargetRunner {
     this.getConfigOptions()
 
     this.loadAutoTargets()
+  }
 
+  startWatching () {
     this.watchAutoTargetsFile()
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
@@ -31,7 +33,7 @@ module.exports = class AutoTargetRunner {
   getConfigOptions () {
   }
 
-  autoRunTarget (targets, delay, context) {
+  autoRunTarget (targets, delay) {
     if (this.autoRunTasks[targets]) {
       // console.log('Clearing entry for:' + targets)
       try {
@@ -124,7 +126,7 @@ module.exports = class AutoTargetRunner {
     // find first match so we can have cascaded watchers
     for (const autoTarget of this.autoTargets) {
       if (minimatch(relativePath, autoTarget.filePattern)) {
-        this.autoRunTarget(autoTarget.runTargets, autoTarget.initialDelayMs, context)
+        this.autoRunTarget(autoTarget.runTargets, autoTarget.initialDelayMs)
         break
       }
     }

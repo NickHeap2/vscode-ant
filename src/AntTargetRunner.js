@@ -1,6 +1,6 @@
 const vscode = require('vscode')
 const dotenv = require('dotenv')
-const util = require('./util')
+const filehelper = require('./filehelper')
 const fs = require('fs')
 
 var extensionContext
@@ -50,8 +50,8 @@ module.exports = class AntTargetRunner {
 
     if (!this.antTerminal) {
       var envVars = {}
-      if (this.envVarsFile && util.pathExists(util.getRootFile(this.rootPath, this.envVarsFile))) {
-        envVars = dotenv.parse(fs.readFileSync(util.getRootFile(this.rootPath, this.envVarsFile)))
+      if (this.envVarsFile && filehelper.pathExists(filehelper.getRootFile(this.rootPath, this.envVarsFile))) {
+        envVars = dotenv.parse(fs.readFileSync(filehelper.getRootFile(this.rootPath, this.envVarsFile)))
       }
 
       if (this.antHome) {
@@ -59,7 +59,7 @@ module.exports = class AntTargetRunner {
       }
 
       // use ansicon on win32?
-      if (process.platform === 'win32' && this.ansiconExe && util.pathExists(this.ansiconExe)) {
+      if (process.platform === 'win32' && this.ansiconExe && filehelper.pathExists(this.ansiconExe)) {
         if (envVars.ANT_ARGS === undefined) {
           envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
         }
@@ -79,7 +79,7 @@ module.exports = class AntTargetRunner {
   }
 
   revealDefinition (target) {
-    vscode.workspace.openTextDocument(util.getRootFile(this.rootPath, 'build.xml'))
+    vscode.workspace.openTextDocument(filehelper.getRootFile(this.rootPath, 'build.xml'))
       .then((document) => {
         return vscode.window.showTextDocument(document)
       })

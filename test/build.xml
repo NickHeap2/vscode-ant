@@ -1,6 +1,9 @@
 <project name="Test project name" default="default">
   <property environment="env"/>
 
+  <import file="macrodefs.xml"/>
+  <import file="targets.xml"/>
+
   <target name="default" depends="clean,compile,test,dist"/>
 
   <target name="fold space" description="Fold space">
