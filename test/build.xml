@@ -82,4 +82,8 @@
     <echo message="This is an verbose." level="verbose"/>
     <echo message="This is an debug." level="debug"/>
   </target>
+
+  <target name="more targets with dependency" depends="more targets target">
+    <echo message="This depends on a target in another file."/>
+  </target>
 </project>

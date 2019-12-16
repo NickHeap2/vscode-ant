@@ -1,11 +1,8 @@
 const vscode = require('vscode')
-// const fs = require('fs')
-// const xml2js = require('xml2js')
 const _ = require('lodash')
 const filehelper = require('./filehelper')
 const path = require('path')
-const util = require('util')
-const BuildFileParser = require('./BuildFileParser')
+const BuildFileParser = require('./BuildFileParser.js')
 
 var configOptions
 
@@ -75,7 +72,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   getConfigOptions () {
-    configOptions = vscode.workspace.getConfiguration('ant')
+    configOptions = vscode.workspace.getConfiguration('ant', null)
     this.sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
     this.buildFilenames = configOptions.get('buildFilenames', 'build.xml')
     if (this.buildFilenames === '' || typeof this.buildFilenames === 'undefined') {
@@ -217,7 +214,7 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  getRoots () {
+  getRoots (varnew) {
     return new Promise(async (resolve, reject) => {
       try {
         var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
@@ -235,10 +232,9 @@ module.exports = class AntTreeDataProvider {
 
       try {
         var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var buildTargets = await this.BuildFileParser.getTargets(buildFileObj, [])
+        var buildTargets = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [])
 
         vscode.window.showInformationMessage('Targets loaded from build.xml!')
-        // project = this.setParentValues(result.project)
 
         var root = {
           id: buildFilename,
