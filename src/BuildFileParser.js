@@ -78,20 +78,23 @@ module.exports = class AntTreeDataProvider {
           } catch (error) {
             return reject(new Error(`Error importing ${antImport}!: ` + error))
           }
-          // existingTargets = existingTargets.concat(importTargets)
         }
       }
 
       // get targets from the project
-      var targets = fileContents.project.target.map((target) => {
-        var antTarget = {
-          id: target.$.name,
-          contextValue: 'antTarget',
-          depends: target.$.depends,
-          name: target.$.name
-        }
-        return antTarget
-      })
+      var targets = []
+      if (fileContents.project.target) {
+        targets = fileContents.project.target.map((target) => {
+          var antTarget = {
+            id: target.$.name,
+            contextValue: 'antTarget',
+            sourceFile: fileName,
+            depends: target.$.depends,
+            name: target.$.name
+          }
+          return antTarget
+        })
+      }
       return resolve(existingTargets.concat(targets))
     })
   }

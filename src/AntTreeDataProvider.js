@@ -6,27 +6,26 @@ const BuildFileParser = require('./BuildFileParser.js')
 
 var configOptions
 
-var extensionContext
+// var extensionContext
 var selectedAntTarget
 
 module.exports = class AntTreeDataProvider {
   constructor (context) {
-    extensionContext = context
+    this.extensionContext = context
 
     this.targetRunner = null
     this.targets = null
     this.project = null
     this.buildFilenames = 'build.xml'
     this.buildFileDirectories = '.'
+    this.fileSystemWatchers = []
 
     var workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders) {
-      this.watchBuildXml(workspaceFolders)
+      this.rootPath = workspaceFolders[0].uri.fsPath
+      // this.watchBuildXml(workspaceFolders)
       this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
     }
-
-    // xml parser for build.xml file
-    // this._parser = new xml2js.Parser()
 
     // event for notify of change of data
     this._onDidChangeTreeData = new vscode.EventEmitter()
@@ -34,10 +33,10 @@ module.exports = class AntTreeDataProvider {
 
     // trap config and workspaces changes to pass updates
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
-    extensionContext.subscriptions.push(onDidChangeConfiguration)
+    this.extensionContext.subscriptions.push(onDidChangeConfiguration)
 
     var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
-    extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
+    this.extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
 
     this.getConfigOptions()
   }
@@ -49,27 +48,48 @@ module.exports = class AntTreeDataProvider {
 
   onDidChangeWorkspaceFolders () {
     var workspaceFolders = vscode.workspace.workspaceFolders
+
     if (workspaceFolders) {
-      this.watchBuildXml(workspaceFolders)
+      this.rootPath = workspaceFolders[0].uri.fsPath
+      this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
     }
+
+    this.refresh()
   }
 
-  watchBuildXml (workspaceFolders) {
-    this.rootPath = workspaceFolders[0].uri.fsPath
-
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, 'build.xml'))
-    extensionContext.subscriptions.push(fileSystemWatcher)
+  watchBuildFile (buildFileName) {
+    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, buildFileName))
+    this.extensionContext.subscriptions.push(fileSystemWatcher)
 
     fileSystemWatcher.onDidChange(() => {
       this._onDidChangeTreeData.fire()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
     fileSystemWatcher.onDidDelete(() => {
       this._onDidChangeTreeData.fire()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
     fileSystemWatcher.onDidCreate(() => {
       this._onDidChangeTreeData.fire()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
+
+    this.fileSystemWatchers.push(fileSystemWatcher)
   }
+
+  // watchBuildXml (workspaceFolders) {
+  //   this.rootPath = workspaceFolders[0].uri.fsPath
+
+  //   // var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, 'build.xml'))
+  //   // extensionContext.subscriptions.push(fileSystemWatcher)
+
+  //   // fileSystemWatcher.onDidChange(() => {
+  //   //   this._onDidChangeTreeData.fire()
+  //   // }, this, extensionContext.subscriptions)
+  //   // fileSystemWatcher.onDidDelete(() => {
+  //   //   this._onDidChangeTreeData.fire()
+  //   // }, this, extensionContext.subscriptions)
+  //   // fileSystemWatcher.onDidCreate(() => {
+  //   //   this._onDidChangeTreeData.fire()
+  //   // }, this, extensionContext.subscriptions)
+  // }
 
   getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant', null)
@@ -85,6 +105,13 @@ module.exports = class AntTreeDataProvider {
   }
 
   refresh () {
+    // remove subscriptions
+    for (const fileSystemWatcher of this.fileSystemWatchers) {
+      this.extensionContext.subscriptions.splice(this.extensionContext.subscriptions.indexOf(fileSystemWatcher), 1)
+      fileSystemWatcher.dispose()
+    }
+    this.fileSystemWatchers = []
+
     this._onDidChangeTreeData.fire()
   }
 
@@ -99,7 +126,7 @@ module.exports = class AntTreeDataProvider {
         tooltip: element.filePath
       }
       if (element.project) {
-        treeItem.label = element.fileName + '    (' + element.project + ')'
+        treeItem.label = `${element.fileName}    (${element.project})`
       }
       return treeItem
     } else if (element.contextValue === 'antTarget') {
@@ -112,7 +139,7 @@ module.exports = class AntTreeDataProvider {
           title: 'selectedAntTarget'
         },
         contextValue: 'antTarget',
-        tooltip: element.description
+        tooltip: `${element.description} (${element.sourceFile})`
       }
       // can be expanded for depends?
       if (element.depends) {
@@ -142,6 +169,7 @@ module.exports = class AntTreeDataProvider {
           title: 'selectedAntTarget'
         },
         contextValue: 'antDepends',
+        tooltip: `${element.description} (${element.sourceFile})`,
         iconPath: {
           light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'dependency.svg'),
           dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'dependency.svg')
@@ -236,6 +264,11 @@ module.exports = class AntTreeDataProvider {
 
         vscode.window.showInformationMessage('Targets loaded from build.xml!')
 
+        const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
+        for (const buildSourceFile of buildSourceFiles) {
+          this.watchBuildFile(buildSourceFile)
+        }
+
         var root = {
           id: buildFilename,
           contextValue: 'antFile',
@@ -304,6 +337,7 @@ module.exports = class AntTreeDataProvider {
         var antTarget = {
           id: target.name,
           contextValue: 'antTarget',
+          sourceFile: target.sourceFile,
           depends: target.depends,
           name: target.name
         }
@@ -340,6 +374,7 @@ module.exports = class AntTreeDataProvider {
         })
         if (target) {
           dependsTarget.depends = target.depends
+          dependsTarget.sourceFile = target.sourceFile
         }
         return dependsTarget
       })
