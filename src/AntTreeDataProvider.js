@@ -343,6 +343,7 @@ module.exports = class AntTreeDataProvider {
           contextValue: 'antTarget',
           sourceFile: target.sourceFile,
           depends: target.depends,
+          description: target.description,
           name: target.name
         }
         return antTarget

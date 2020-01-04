@@ -92,6 +92,13 @@ module.exports = class AntTreeDataProvider {
             depends: target.$.depends,
             name: target.$.name
           }
+
+          if (target.$.description) {
+            antTarget.description = target.$.description
+          } else {
+            antTarget.description = target.$.name
+          }
+
           return antTarget
         })
       }
