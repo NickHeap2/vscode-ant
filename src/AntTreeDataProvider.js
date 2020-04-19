@@ -18,7 +18,7 @@ module.exports = class AntTreeDataProvider {
     this.project = null
     this.buildFilenames = 'build.xml'
     this.buildFileDirectories = '.'
-    this.fileSystemWatchers = []
+    this.eventListeners = []
 
     var workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders) {
@@ -57,40 +57,29 @@ module.exports = class AntTreeDataProvider {
     this.refresh()
   }
 
-  watchBuildFile (buildFileName) {
-    console.debug(`watching file: ${filehelper.getRootFile(this.rootPath, buildFileName)}`)
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, buildFileName))
-    this.extensionContext.subscriptions.push(fileSystemWatcher)
-
-    fileSystemWatcher.onDidChange(() => {
-      this._onDidChangeTreeData.fire()
-    }, this, this.extensionContext.subscriptions)
-    fileSystemWatcher.onDidDelete(() => {
-      this._onDidChangeTreeData.fire()
-    }, this, this.extensionContext.subscriptions)
-    fileSystemWatcher.onDidCreate(() => {
-      this._onDidChangeTreeData.fire()
-    }, this, this.extensionContext.subscriptions)
-
-    this.fileSystemWatchers.push(fileSystemWatcher)
+  watchBuildFile (rootPath, buildFileName) {
+    const buildFile = filehelper.getRootFile(this.rootPath, buildFileName)
+    this.watchFile(buildFile)
   }
 
-  // watchBuildXml (workspaceFolders) {
-  //   this.rootPath = workspaceFolders[0].uri.fsPath
+  watchFile (globPattern) {
+    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(globPattern)
+    this.extensionContext.subscriptions.push(fileSystemWatcher)
 
-  //   // var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(filehelper.getRootFile(this.rootPath, 'build.xml'))
-  //   // extensionContext.subscriptions.push(fileSystemWatcher)
-
-  //   // fileSystemWatcher.onDidChange(() => {
-  //   //   this._onDidChangeTreeData.fire()
-  //   // }, this, extensionContext.subscriptions)
-  //   // fileSystemWatcher.onDidDelete(() => {
-  //   //   this._onDidChangeTreeData.fire()
-  //   // }, this, extensionContext.subscriptions)
-  //   // fileSystemWatcher.onDidCreate(() => {
-  //   //   this._onDidChangeTreeData.fire()
-  //   // }, this, extensionContext.subscriptions)
-  // }
+    this.eventListeners.push({
+      filename: globPattern,
+      fileSystemWatcher: fileSystemWatcher,
+      didChangeListener: fileSystemWatcher.onDidChange(() => {
+        this.refresh()
+      }, this, this.extensionContext.subscriptions),
+      didDeleteListener: fileSystemWatcher.onDidDelete(() => {
+        this.refresh()
+      }, this, this.extensionContext.subscriptions),
+      didCreateListener: fileSystemWatcher.onDidCreate(() => {
+        this.refresh()
+      }, this, this.extensionContext.subscriptions)
+    })
+  }
 
   getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant', null)
@@ -110,11 +99,14 @@ module.exports = class AntTreeDataProvider {
   }
 
   refresh () {
-    // remove subscriptions
-    for (const fileSystemWatcher of this.fileSystemWatchers) {
-      fileSystemWatcher.dispose()
+    // remove event listeners
+    for (const eventListener of this.eventListeners) {
+      eventListener.didChangeListener.dispose()
+      eventListener.didDeleteListener.dispose()
+      eventListener.didCreateListener.dispose()
+      eventListener.fileSystemWatcher.dispose()
     }
-    this.fileSystemWatchers = []
+    this.eventListeners = []
 
     this._onDidChangeTreeData.fire()
   }
@@ -246,7 +238,7 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  getRoots (varnew) {
+  getRoots () {
     return new Promise(async (resolve, reject) => {
       try {
         var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
@@ -270,7 +262,7 @@ module.exports = class AntTreeDataProvider {
 
         // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
-          this.watchBuildFile(buildSourceFile)
+          this.watchBuildFile(this.rootPath, buildSourceFile)
         }
 
         var root = {
@@ -289,45 +281,11 @@ module.exports = class AntTreeDataProvider {
         vscode.window.showErrorMessage('Error parsing build.xml!')
         return reject(new Error('Error parsing build.xml!:' + error))
       }
-
-      // var buildXml = filehelper.getRootFile(this.rootPath, 'build.xml')
-      // if (filehelper.pathExists(buildXml)) {
-      //   fs.readFile(buildXml, 'utf-8', (err, data) => {
-      //     if (err) {
-      //       vscode.window.showErrorMessage('Error reading build.xml!')
-      //       reject(new Error('Error reading build.xml!: ' + err))
-      //     }
-      //     this._parser.parseString(data, (err, result) => {
-      //       if (err) {
-      //         vscode.window.showErrorMessage('Error parsing build.xml!')
-      //         reject(new Error('Error parsing build.xml!:' + err))
-      //       } else {
-      //         vscode.window.showInformationMessage('Targets loaded from build.xml!')
-      //         project = this.setParentValues(result.project)
-
-      //         var root = {
-      //           id: 'build.xml',
-      //           contextValue: 'antFile',
-      //           filePath: buildXml,
-      //           fileName: 'build.xml'
-      //         }
-      //         if (project.$.name) {
-      //           root.project = project.$.name
-      //         }
-
-      //         resolve([root])
-      //       }
-      //     })
-      //   })
-      // } else {
-      //   vscode.window.showInformationMessage('Workspace has no build.xml.')
-      //   resolve([])
-      // }
     })
   }
 
   getTargetsInProject () {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // var targets = project.target.map((target) => {
       //   var antTarget = {
       //     id: target.$.name,
@@ -363,7 +321,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   getDependsInTarget (element) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       var depends = element.depends.split(',').map((depends) => {
         var dependsTarget = {
           id: depends,

@@ -1,6 +1,6 @@
 <project name="More Targets" default="more targets target">
 
-  <import file="nestedfolder/anotherlevel.xml"/>
+  <import file="nestedFolder/anotherlevel.xml"/>
 
   <target name="more targets target" description="More Targets">
     <echo message="We have more targets!"/>

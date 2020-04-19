@@ -14,14 +14,10 @@
     <echo message="${env.DLC}"/>
 
 
-
-
-
   </target>
 
   <target name="clean" description="Clean all the things!">
     <echo message="All the things are cleaned!"/>
-
 
 
 

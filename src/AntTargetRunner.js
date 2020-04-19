@@ -79,7 +79,7 @@ module.exports = class AntTargetRunner {
   }
 
   revealDefinition (target) {
-    vscode.workspace.openTextDocument(filehelper.getRootFile(this.rootPath, 'build.xml'))
+    vscode.workspace.openTextDocument(filehelper.getRootFile(this.rootPath, target.sourceFile))
       .then((document) => {
         return vscode.window.showTextDocument(document)
       })
