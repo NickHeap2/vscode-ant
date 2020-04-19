@@ -15,4 +15,5 @@ exports.pathExists = pathExists
 function getRootFile (root, f) {
   return path.join(root, f)
 }
+
 exports.getRootFile = getRootFile

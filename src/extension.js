@@ -8,6 +8,7 @@ const AutoTargetRunner = require('./AutoTargetRunner')
 function activate (context) {
   const antTargetRunner = new AntTargetRunner(context)
   const autoTargetRunner = new AutoTargetRunner(context, antTargetRunner)
+  autoTargetRunner.startWatching()
 
   const antTreeDataProvider = new AntTreeDataProvider(context)
   antTreeDataProvider.targetRunner = antTargetRunner

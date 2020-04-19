@@ -1,0 +1,5 @@
+<project name="Another level with no targets">
+  <target name="new one" description="Looooooooooooooooooooooooooooooooooooong5 desc" />
+
+
+</project>

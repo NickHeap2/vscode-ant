@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.1.6",
+    "version": "0.2.0",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -144,6 +144,16 @@
                     "type": "string",
                     "default": "",
                     "description": "Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
+                },
+                "ant.buildFilenames": {
+                    "type": "string",
+                    "default": "build.xml",
+                    "description": "Comma seperated list of file names to check for build file."
+                },
+                "ant.buildFileDirectories": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Comma seperated list of directories to check for build files."
                 }
             }
         }
@@ -155,17 +165,18 @@
         "lint": "eslint src"
     },
     "devDependencies": {
-        "@types/mocha": "^5.2.6",
-        "@types/node": "^12.0.2",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.13.0",
+        "@types/vscode": "^1.44.0",
         "chai": "^4.2.0",
-        "eslint": "^5.16.0",
-        "vscode": "^1.1.35"
+        "eslint": "^6.8.0",
+        "vscode-test": "^1.3.0"
     },
     "dependencies": {
-        "dotenv": "^8.0.0",
+        "dotenv": "^8.2.0",
         "lodash": "^4.17.13",
         "minimatch": "^3.0.4",
-        "xml2js": "^0.4.19"
+        "xml2js": "^0.4.22"
     },
     "standard": {
         "env": [
