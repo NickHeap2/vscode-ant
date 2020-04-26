@@ -3,6 +3,7 @@ const _ = require('lodash')
 const filehelper = require('./filehelper')
 const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
+const messageHelper = require('./messageHelper')
 
 var configOptions
 
@@ -130,7 +131,7 @@ module.exports = class AntTreeDataProvider {
         id: element.name,
         label: element.name,
         command: {
-          arguments: [element.name],
+          arguments: [element],
           command: 'vscode-ant.selectedAntTarget',
           title: 'selectedAntTarget'
         },
@@ -160,7 +161,7 @@ module.exports = class AntTreeDataProvider {
       let treeItem = {
         label: element.name,
         command: {
-          arguments: [element.name],
+          arguments: [element],
           command: 'vscode-ant.selectedAntTarget',
           title: 'selectedAntTarget'
         },
@@ -185,7 +186,7 @@ module.exports = class AntTreeDataProvider {
 
   getChildren (element) {
     if (!this.rootPath) {
-      vscode.window.showInformationMessage('No build.xml in empty workspace.')
+      messageHelper.showInformationMessage('No build.xml in empty workspace.')
       return new Promise((resolve, reject) => {
         resolve([])
         reject(new Error('Failed somehow'))
@@ -243,14 +244,14 @@ module.exports = class AntTreeDataProvider {
       try {
         var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
-        vscode.window.showInformationMessage('Workspace has no build.xml files.')
+        messageHelper.showInformationMessage('Workspace has no build.xml files.')
         return resolve([])
       }
 
       try {
         var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
       } catch (error) {
-        vscode.window.showErrorMessage('Error reading build.xml!')
+        messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
         return reject(new Error('Error reading build.xml!: ' + error))
       }
 
@@ -258,7 +259,7 @@ module.exports = class AntTreeDataProvider {
         var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
         var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
-        vscode.window.showInformationMessage('Targets loaded from build.xml!')
+        messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
 
         // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
@@ -278,7 +279,7 @@ module.exports = class AntTreeDataProvider {
 
         resolve([root])
       } catch (error) {
-        vscode.window.showErrorMessage('Error parsing build.xml!')
+        messageHelper.showErrorMessage('Error parsing build.xml!')
         return reject(new Error('Error parsing build.xml!:' + error))
       }
     })
@@ -326,7 +327,9 @@ module.exports = class AntTreeDataProvider {
         var dependsTarget = {
           id: depends,
           contextValue: 'antDepends',
-          name: depends
+          name: depends,
+          description: '',
+          sourceFile: ''
         }
         // get details of this target
         var target = _.find(this.targets, (o) => {
@@ -338,6 +341,7 @@ module.exports = class AntTreeDataProvider {
         if (target) {
           dependsTarget.depends = target.depends
           dependsTarget.sourceFile = target.sourceFile
+          dependsTarget.description = target.description
         }
         return dependsTarget
       })
@@ -345,17 +349,17 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  selectedAntTarget (target) {
-    selectedAntTarget = target
+  selectedAntTarget (targetElement) {
+    selectedAntTarget = targetElement
   }
 
   runSelectedAntTarget () {
     if (selectedAntTarget && this.targetRunner) {
-      var target = selectedAntTarget
+      var target = selectedAntTarget.name
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      this.targetRunner.runAntTarget({name: target})
+      this.targetRunner.runAntTarget({name: target, buildFile: selectedAntTarget.sourceFile})
     }
   }
 

@@ -11,17 +11,13 @@ module.exports = class AntTreeDataProvider {
   }
 
   findBuildFile (searchDirectories, searchFileNames) {
-    return new Promise((resolve, reject) => {
-      for (const searchDirectory of searchDirectories) {
-        for (const searchFileName of searchFileNames) {
-          const searchFile = path.join(searchDirectory, searchFileName)
-          const searchPath = path.join(this.rootPath, searchFile)
-          if (filehelper.pathExists(searchPath)) {
-            return resolve(searchFile)
-          }
-        }
+    return new Promise(async (resolve, reject) => {
+      try {
+        var filename = await filehelper.findfirstFile(this.rootPath, searchDirectories, searchFileNames)
+        resolve(filename)
+      } catch (error) {
+        return reject(new Error('No build file found!'))
       }
-      return reject(new Error('No build file found!'))
     })
   }
 

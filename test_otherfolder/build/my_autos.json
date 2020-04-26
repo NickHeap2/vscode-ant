@@ -1,0 +1,22 @@
+{
+  "autoTargets": [
+    {
+      "filePattern": "**/*.{p,w,i,cls}",
+      "buildFile": "build/my_build.xml",
+      "runTargets": "compile test",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.test",
+      "buildFile": "build/my_build.xml",
+      "runTargets": "test",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "**/*.xml",
+      "buildFile": "build/my_build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    }
+  ] 
+}

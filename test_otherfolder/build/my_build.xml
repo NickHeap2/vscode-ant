@@ -1,0 +1,54 @@
+<project name="Test project name" default="default">
+  <property environment="env"/>
+
+  <import file="my_macros.xml"/>
+  
+  <target name="default" depends="clean,compile,test,dist,macrodefTarget"/>
+
+  <target name="clean" description="Clean all the things!">
+    <echo message="All the things are cleaned!"/>
+
+
+
+
+  </target>
+
+  <target name="start_databases">
+    <echo message="Databases are now running."/>
+
+
+
+
+
+  </target>
+
+  <target name="compile" depends="start_databases">
+    <echo message="All the things are compiled!"/>
+
+
+
+
+
+  </target>
+
+  <target
+    name="test"
+    depends="compile">
+    <echo message="0 test have been run."/>
+
+
+
+
+
+  </target>
+
+  <target name="dist" depends="compile,test">
+    <echo message="We shipped it!"/>
+
+
+
+
+
+  </target>
+
+</project>
