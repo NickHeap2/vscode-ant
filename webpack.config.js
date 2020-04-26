@@ -34,7 +34,7 @@ const config = {
       {
         from: 'resources',
         to: 'resources',
-        test: /\.(png|svg)$/
+        ignore: ['*.gif', 'sshot.png']
       }
     ])
   ]

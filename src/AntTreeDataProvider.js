@@ -383,7 +383,7 @@ module.exports = class AntTreeDataProvider {
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      this.targetRunner.runAntTarget({name: target, buildFile: selectedAntTarget.sourceFile})
+      this.targetRunner.runAntTarget({name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 

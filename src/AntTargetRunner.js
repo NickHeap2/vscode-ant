@@ -47,7 +47,7 @@ module.exports = class AntTargetRunner {
     }
 
     const targets = context.name
-    const buildFile = context.buildFile
+    const buildFile = context.sourceFile
 
     if (!this.antTerminal) {
       var envVars = {ANT_HOME: '', ANT_ARGS: ''}
