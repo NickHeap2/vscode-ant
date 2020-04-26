@@ -3,6 +3,7 @@ const _ = require('lodash')
 const filehelper = require('./filehelper')
 const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
+const messageHelper = require('./messageHelper')
 
 var configOptions
 
@@ -185,7 +186,7 @@ module.exports = class AntTreeDataProvider {
 
   getChildren (element) {
     if (!this.rootPath) {
-      vscode.window.showInformationMessage('No build.xml in empty workspace.')
+      messageHelper.showInformationMessage('No build.xml in empty workspace.')
       return new Promise((resolve, reject) => {
         resolve([])
         reject(new Error('Failed somehow'))
@@ -243,14 +244,14 @@ module.exports = class AntTreeDataProvider {
       try {
         var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
-        vscode.window.showInformationMessage('Workspace has no build.xml files.')
+        messageHelper.showInformationMessage('Workspace has no build.xml files.')
         return resolve([])
       }
 
       try {
         var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
       } catch (error) {
-        vscode.window.showErrorMessage('Error reading build.xml!')
+        messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
         return reject(new Error('Error reading build.xml!: ' + error))
       }
 
@@ -258,7 +259,7 @@ module.exports = class AntTreeDataProvider {
         var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
         var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
-        vscode.window.showInformationMessage('Targets loaded from build.xml!')
+        messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
 
         // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
@@ -278,7 +279,7 @@ module.exports = class AntTreeDataProvider {
 
         resolve([root])
       } catch (error) {
-        vscode.window.showErrorMessage('Error parsing build.xml!')
+        messageHelper.showErrorMessage('Error parsing build.xml!')
         return reject(new Error('Error parsing build.xml!:' + error))
       }
     })

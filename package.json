@@ -162,7 +162,8 @@
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test",
         "tests": "mocha tests",
-        "lint": "eslint src"
+        "lint": "eslint src",
+        "publish": "vsce publish"
     },
     "devDependencies": {
         "@types/mocha": "^7.0.2",

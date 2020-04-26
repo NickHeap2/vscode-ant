@@ -84,18 +84,22 @@ The autoTarget file build.auto should be in the json format below:
 
 ## Known Limitations
 
-Only works for build.xml, build.env & build.auto in the root folder at the moment.
+Only works for build.env in the root folder at the moment.
 
 ## Release Notes
 
-Fix issue where having multiple auto targets separated by spaces wouldn't run after change to surround targets by quotes.
-Quotes are now only added when running a selected target from the tree that contains a space and not for auto targets. To use targets with spaces in auto targets you need to surround it with escaped quotes (\").
-Updated dependencies.
+New configurable build directories and build files names to search for build file and build.auto.
+Defined directories will be searched in order for the defined filenames in order until the first one is found.
+
+First support for imported build targets so that you can see the targets defined.
+
+## [0.2.0] - 2020-04-19
+### Added
+- Configurable build file directories.
+- Configurable build file names.
+- Support for imported build targets.
+- Prefix window messages with ATR:.
 
 ## [0.1.6] - 2019-07-02
 ### Added
 - Update dependencies.
-
-## [0.1.5] - 2019-07-02
-### Fixed
-- Fixed error where space separated auto targets are surrounded by quotes.
