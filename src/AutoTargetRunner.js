@@ -43,6 +43,10 @@ module.exports = class AutoTargetRunner {
   async getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant', null)
 
+    this.autoFilename = configOptions.get('buildAutoFile', 'build.auto')
+    if (this.autoFilename === '' || typeof this.autoFilename === 'undefined') {
+      this.autoFilename = 'build.auto'
+    }
     this.buildFileDirectories = configOptions.get('buildFileDirectories', '.')
     if (this.buildFileDirectories === '' || typeof this.buildFileDirectories === 'undefined') {
       this.buildFileDirectories = '.'
@@ -52,7 +56,7 @@ module.exports = class AutoTargetRunner {
     this.loadAutoTargets()
   }
 
-  autoRunTarget (targets, delay) {
+  autoRunTarget (targets, buildFile, delay) {
     if (this.autoRunTasks[targets]) {
       // console.log('Clearing entry for:' + targets)
       try {
@@ -66,7 +70,7 @@ module.exports = class AutoTargetRunner {
     this.autoRunTasks[targets] = setTimeout(() => {
       // console.log('Running entry for:' + targets)
       this.autoRunTasks[targets] = undefined
-      this.targetRunner.runAntTarget({name: targets})
+      this.targetRunner.runAntTarget({name: targets, buildFile: buildFile})
     }, delay, targets)
   }
 
@@ -152,7 +156,7 @@ module.exports = class AutoTargetRunner {
     // find first match so we can have cascaded watchers
     for (const autoTarget of this.autoTargets) {
       if (minimatch(relativePath, autoTarget.filePattern)) {
-        this.autoRunTarget(autoTarget.runTargets, autoTarget.initialDelayMs)
+        this.autoRunTarget(autoTarget.runTargets, autoTarget.buildFile, autoTarget.initialDelayMs)
         break
       }
     }

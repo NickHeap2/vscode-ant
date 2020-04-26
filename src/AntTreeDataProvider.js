@@ -131,7 +131,7 @@ module.exports = class AntTreeDataProvider {
         id: element.name,
         label: element.name,
         command: {
-          arguments: [element.name],
+          arguments: [element],
           command: 'vscode-ant.selectedAntTarget',
           title: 'selectedAntTarget'
         },
@@ -161,7 +161,7 @@ module.exports = class AntTreeDataProvider {
       let treeItem = {
         label: element.name,
         command: {
-          arguments: [element.name],
+          arguments: [element],
           command: 'vscode-ant.selectedAntTarget',
           title: 'selectedAntTarget'
         },
@@ -327,7 +327,9 @@ module.exports = class AntTreeDataProvider {
         var dependsTarget = {
           id: depends,
           contextValue: 'antDepends',
-          name: depends
+          name: depends,
+          description: '',
+          sourceFile: ''
         }
         // get details of this target
         var target = _.find(this.targets, (o) => {
@@ -339,6 +341,7 @@ module.exports = class AntTreeDataProvider {
         if (target) {
           dependsTarget.depends = target.depends
           dependsTarget.sourceFile = target.sourceFile
+          dependsTarget.description = target.description
         }
         return dependsTarget
       })
@@ -346,17 +349,17 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  selectedAntTarget (target) {
-    selectedAntTarget = target
+  selectedAntTarget (targetElement) {
+    selectedAntTarget = targetElement
   }
 
   runSelectedAntTarget () {
     if (selectedAntTarget && this.targetRunner) {
-      var target = selectedAntTarget
+      var target = selectedAntTarget.name
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      this.targetRunner.runAntTarget({name: target})
+      this.targetRunner.runAntTarget({name: target, buildFile: selectedAntTarget.sourceFile})
     }
   }
 

@@ -154,6 +154,11 @@
                     "type": "string",
                     "default": ".",
                     "description": "Comma seperated list of directories to check for build files."
+                },
+                "ant.buildAutoFile": {
+                  "type": "string",
+                  "default": "build.auto",
+                  "description": "File name to load build auto targets from."
                 }
             }
         }

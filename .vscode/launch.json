@@ -6,12 +6,25 @@
 	"version": "0.2.0",
     "configurations": [
         {
-            "name": "Extension",
+            "name": "Extension test folder",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Extension test_otherfolder folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test_otherfolder"
             ]
         },
         {

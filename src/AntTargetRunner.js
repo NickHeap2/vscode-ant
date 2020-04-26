@@ -46,10 +46,11 @@ module.exports = class AntTargetRunner {
       return
     }
 
-    var targets = context.name
+    const targets = context.name
+    const buildFile = context.buildFile
 
     if (!this.antTerminal) {
-      var envVars = {}
+      var envVars = {ANT_HOME: '', ANT_ARGS: ''}
       if (this.envVarsFile && filehelper.pathExists(filehelper.getRootFile(this.rootPath, this.envVarsFile))) {
         envVars = dotenv.parse(fs.readFileSync(filehelper.getRootFile(this.rootPath, this.envVarsFile)))
       }
@@ -74,7 +75,12 @@ module.exports = class AntTargetRunner {
       }
     }
 
-    this.antTerminal.sendText(`${this.antExecutable} ${targets}`)
+    if (buildFile && buildFile !== 'build.xml') {
+      this.antTerminal.sendText(`${this.antExecutable} -buildfile ${buildFile} ${targets}`)
+    } else {
+      this.antTerminal.sendText(`${this.antExecutable} ${targets}`)
+    }
+
     this.antTerminal.show(true)
   }
 

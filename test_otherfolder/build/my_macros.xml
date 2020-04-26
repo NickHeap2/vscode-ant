@@ -1,0 +1,12 @@
+<project name="Macrodefs" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:sonar="antlib:org.sonar.ant">
+  <target name="macrodefTarget">
+    <macrodef name="echoSomeText">
+      <attribute name="someText"/>
+      <sequential>
+        <echo message="@{someText}"/>
+      </sequential>
+    </macrodef>
+
+    <echoSomeText someText="Macrodef Echo Text"/>
+  </target>
+</project>
