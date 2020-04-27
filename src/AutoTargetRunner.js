@@ -56,7 +56,7 @@ module.exports = class AutoTargetRunner {
     this.loadAutoTargets()
   }
 
-  autoRunTarget (targets, buildFile, delay) {
+  autoRunTarget (targets, sourceFile, delay) {
     if (this.autoRunTasks[targets]) {
       // console.log('Clearing entry for:' + targets)
       try {
@@ -70,7 +70,7 @@ module.exports = class AutoTargetRunner {
     this.autoRunTasks[targets] = setTimeout(() => {
       // console.log('Running entry for:' + targets)
       this.autoRunTasks[targets] = undefined
-      this.targetRunner.runAntTarget({name: targets, buildFile: buildFile})
+      this.targetRunner.runAntTarget({name: targets, sourceFile: sourceFile})
     }, delay, targets)
   }
 

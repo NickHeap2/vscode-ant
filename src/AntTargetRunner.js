@@ -28,17 +28,41 @@ module.exports = class AntTargetRunner {
     this.rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
   }
 
-  getConfigOptions () {
+  async getConfigOptions () {
     let configOptions = vscode.workspace.getConfiguration('ant', null)
     this.antHome = configOptions.get('home', '')
     this.envVarsFile = configOptions.get('envVarsFile', 'build.env')
     this.antExecutable = configOptions.get('executable', 'ant')
     this.ansiconExe = configOptions.get('ansiconExe', '')
 
+    this.buildFileDirectories = configOptions.get('buildFileDirectories', '.')
+    if (this.buildFileDirectories === '' || typeof this.buildFileDirectories === 'undefined') {
+      this.buildFileDirectories = '.'
+    }
+
+    if (this.envVarsFile === '' || typeof this.envVarsFile === 'undefined') {
+      this.envVarsFile = 'build.env'
+    }
+
+    this.envVarsFile = await filehelper.findfirstFile(this.rootPath, this.buildFileDirectories.split(','), this.envVarsFile.split(','))
+
     if (this.antTerminal) {
       this.antTerminal.dispose()
       this.antTerminal = null
     }
+  }
+
+  nodeRunAntTarget (context) {
+    if (!context) {
+      return
+    }
+
+    var target = context.name
+    if (target.indexOf(' ') >= 0) {
+      target = '"' + target + '"'
+    }
+
+    this.runAntTarget({ name: target, sourceFile: context.sourceFile })
   }
 
   runAntTarget (context) {
@@ -47,10 +71,10 @@ module.exports = class AntTargetRunner {
     }
 
     const targets = context.name
-    const buildFile = context.buildFile
+    const buildFile = context.sourceFile
 
     if (!this.antTerminal) {
-      var envVars = {ANT_HOME: '', ANT_ARGS: ''}
+      var envVars = {}
       if (this.envVarsFile && filehelper.pathExists(filehelper.getRootFile(this.rootPath, this.envVarsFile))) {
         envVars = dotenv.parse(fs.readFileSync(filehelper.getRootFile(this.rootPath, this.envVarsFile)))
       }

@@ -5,14 +5,38 @@ const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
 
-var configOptions
+var darkDefault
+var lightDefault
+var darkTarget
+var lightTarget
+var darkDependency
+var lightDependency
 
-// var extensionContext
+var configOptions
 var selectedAntTarget
 
 module.exports = class AntTreeDataProvider {
   constructor (context) {
     this.extensionContext = context
+
+    darkTarget = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'target.svg')
+    )
+    lightTarget = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'light', 'target.svg')
+    )
+    darkDefault = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'default.svg')
+    )
+    lightDefault = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'light', 'default.svg')
+    )
+    darkDependency = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'dependency.svg')
+    )
+    lightDependency = vscode.Uri.file(
+      path.join(context.extensionPath, 'resources', 'icons', 'light', 'dependency.svg')
+    )
 
     this.targetRunner = null
     this.targets = null
@@ -146,13 +170,13 @@ module.exports = class AntTreeDataProvider {
       }
       if (element.name === this.project.default) {
         treeItem.iconPath = {
-          light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'default.svg'),
-          dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'default.svg')
+          light: lightDefault,
+          dark: darkDefault
         }
       } else {
         treeItem.iconPath = {
-          light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'target.svg'),
-          dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'target.svg')
+          light: lightTarget,
+          dark: darkTarget
         }
       }
 
@@ -168,8 +192,8 @@ module.exports = class AntTreeDataProvider {
         contextValue: 'antDepends',
         tooltip: `${element.description} (${element.sourceFile})`,
         iconPath: {
-          light: path.join(__filename, '..', '..', 'resources', 'icons', 'light', 'dependency.svg'),
-          dark: path.join(__filename, '..', '..', 'resources', 'icons', 'dark', 'dependency.svg')
+          light: lightDependency,
+          dark: darkDependency
         }
       }
       // can be expanded for depends?
@@ -359,7 +383,7 @@ module.exports = class AntTreeDataProvider {
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      this.targetRunner.runAntTarget({name: target, buildFile: selectedAntTarget.sourceFile})
+      this.targetRunner.runAntTarget({name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 
