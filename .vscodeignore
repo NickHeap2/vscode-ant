@@ -1,9 +1,15 @@
 .vscode/**
 .vscode-test/**
+apache-ant/**
+node_modules/**
+resources/**
+src/**
 test/**
 test_otherfolder/**
-src/old.js2
+tests/**
+*
 .gitignore
 jsconfig.json
 vsc-extension-quickstart.md
 .eslintrc.json
+webpack.config.js

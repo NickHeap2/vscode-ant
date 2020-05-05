@@ -27,8 +27,8 @@
         "onView:antRunnerView",
         "workspaceContains:build.auto"
     ],
-    "main": "./dist/extension",
-    "icon": "resources/main.png",
+    "main": "dist/extension",
+    "icon": "dist/resources/main.png",
     "contributes": {
         "commands": [
             {
@@ -43,32 +43,32 @@
                 "command": "vscode-ant.runSelectedAntTarget",
                 "title": "Run Selected Ant Target",
                 "icon": {
-                    "light": "resources/icons/light/run.svg",
-                    "dark": "resources/icons/dark/run.svg"
+                    "light": "dist/resources/icons/light/run.svg",
+                    "dark": "dist/resources/icons/dark/run.svg"
                 }
             },
             {
                 "command": "vscode-ant.runAntTarget",
                 "title": "Run Ant Target",
                 "icon": {
-                    "light": "resources/icons/light/run.svg",
-                    "dark": "resources/icons/dark/run.svg"
+                    "light": "dist/resources/icons/light/run.svg",
+                    "dark": "dist/resources/icons/dark/run.svg"
                 }
             },
             {
                 "command": "vscode-ant.runAntDependency",
                 "title": "Run Ant Dependency",
                 "icon": {
-                    "light": "resources/icons/light/run.svg",
-                    "dark": "resources/icons/dark/run.svg"
+                    "light": "dist/resources/icons/light/run.svg",
+                    "dark": "dist/resources/icons/dark/run.svg"
                 }
             },
             {
                 "command": "vscode-ant.refreshAntTargets",
                 "title": "Refresh Ant Targets",
                 "icon": {
-                    "light": "resources/icons/light/refresh.svg",
-                    "dark": "resources/icons/dark/refresh.svg"
+                    "light": "dist/resources/icons/light/refresh.svg",
+                    "dark": "dist/resources/icons/dark/refresh.svg"
                 }
             }
         ],
@@ -168,6 +168,7 @@
         "test": "node ./node_modules/vscode/bin/test",
         "tests": "mocha tests",
         "lint": "eslint src",
+        "package": "vsce package",
         "publish": "vsce publish",
         "vscode:prepublish": "webpack --mode production",
         "webpack": "webpack --mode development",

@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.2.0] - 2020-04-27
+### Added
+- Bundle Ant 1.10.7 with windows colour library by Dennis Lang.
+- Configurable build file directories.
+- Configurable build file names.
+- Support for imported build targets.
+- Prefix window messages with ATR:.
+
 ## [0.1.6] - 2019-07-02
 ### Added
 - Update dependencies.

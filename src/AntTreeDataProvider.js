@@ -20,22 +20,22 @@ module.exports = class AntTreeDataProvider {
     this.extensionContext = context
 
     darkTarget = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'target.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'target.svg')
     )
     lightTarget = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'light', 'target.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'target.svg')
     )
     darkDefault = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'default.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'default.svg')
     )
     lightDefault = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'light', 'default.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'default.svg')
     )
     darkDependency = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'dark', 'dependency.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'dependency.svg')
     )
     lightDependency = vscode.Uri.file(
-      path.join(context.extensionPath, 'resources', 'icons', 'light', 'dependency.svg')
+      path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'dependency.svg')
     )
 
     this.targetRunner = null

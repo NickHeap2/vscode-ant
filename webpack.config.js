@@ -35,6 +35,11 @@ const config = {
         from: 'resources',
         to: 'resources',
         ignore: ['*.gif', 'sshot.png']
+      },
+      {
+        from: 'apache-ant',
+        to: 'apache-ant',
+        ignore: ['manual/**']
       }
     ])
   ]

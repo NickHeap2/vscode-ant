@@ -2,6 +2,7 @@ const vscode = require('vscode')
 const dotenv = require('dotenv')
 const filehelper = require('./filehelper')
 const fs = require('fs')
+const path = require('path')
 
 var extensionContext
 
@@ -30,10 +31,33 @@ module.exports = class AntTargetRunner {
 
   async getConfigOptions () {
     let configOptions = vscode.workspace.getConfiguration('ant', null)
-    this.antHome = configOptions.get('home', '')
     this.envVarsFile = configOptions.get('envVarsFile', 'build.env')
-    this.antExecutable = configOptions.get('executable', 'ant')
     this.ansiconExe = configOptions.get('ansiconExe', '')
+
+    this.antHome = configOptions.get('home', '')
+    if (this.antHome === '' || typeof this.antHome === 'undefined') {
+      this.antHome = path.join(extensionContext.extensionPath, 'dist', 'apache-ant')
+    }
+
+    this.antExecutable = configOptions.get('executable', 'ant')
+    if (this.antExecutable === '' || typeof this.antExecutable === 'undefined') {
+      if (process.platform === 'win32') {
+        this.antExecutable = 'ant.bat'
+      } else {
+        this.antExecutable = 'ant.sh'
+      }
+      // if (!filehelper.pathExists(this.antExecutable) && filehelper.pathExists(this.antHome)) {
+      //   const joinedPath = path.join(this.antHome, 'bin', this.antExecutable)
+      //   if (filehelper.pathExists(joinedPath)) {
+      //     this.antExecutable = '"' + joinedPath + '"'
+      //   }
+      // }
+    }
+
+    // enable WinColorLogger?
+    if (process.platform === 'win32' && filehelper.pathExists(this.antHome)) {
+      this.useWinColorLogger = filehelper.pathExists(path.join(this.antHome, 'lib', 'WinColorLogger.jar'))
+    }
 
     this.buildFileDirectories = configOptions.get('buildFileDirectories', '.')
     if (this.buildFileDirectories === '' || typeof this.buildFileDirectories === 'undefined') {
@@ -83,6 +107,18 @@ module.exports = class AntTargetRunner {
         envVars.ANT_HOME = this.antHome
       }
 
+      // add ant to path?
+      if (!filehelper.pathExists(this.antExecutable) && filehelper.pathExists(this.antHome)) {
+        const joinedPath = path.join(this.antHome, 'bin')
+        if (filehelper.pathExists(joinedPath)) {
+          if (process.platform === 'win32') {
+            envVars.Path = process.env.Path + ';' + joinedPath
+          } else {
+            envVars.Path = process.env.Path + ':' + joinedPath
+          }
+        }
+      }
+
       // use ansicon on win32?
       if (process.platform === 'win32' && this.ansiconExe && filehelper.pathExists(this.ansiconExe)) {
         if (envVars.ANT_ARGS === undefined) {
@@ -95,6 +131,12 @@ module.exports = class AntTargetRunner {
           this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe})
         }
       } else {
+        if (this.useWinColorLogger) {
+          envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.WinColorLogger'
+        } else if (process.platform !== 'win32') {
+          envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
+        }
+
         this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
       }
     }

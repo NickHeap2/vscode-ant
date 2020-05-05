@@ -5,7 +5,8 @@ Ant build output can be colorized, environment variables can be set and targets 
 
 ## Features
 
-- Searches for build.xml in the root directory (but you can conifgure it to look eleswhere) on startup and loads the targets ready to run.
+- Bundled Ant 1.10.7 with a windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
+- Searches for build.xml in the root directory (but you can configure it to look eleswhere) on startup and loads the targets ready to run.
 - The targets and their dependencies are visualised in a treeview and can be run from the toolbar or the context menu option.
 - Dependencies of dependencies are shown recursively to give a full picture of what will be run and in which order.
 - Targets can be sorted as they appear in the file or in alphabetical order.
@@ -20,7 +21,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 
 ![Reveal definition](/resources/reveal.gif "Reveal definition")
 
-- Colorized ant output on windows using ansicon (https://github.com/adoxa/ansicon).
+- Colorized ant output on windows using built in Ant with Dennis Langs ant color logger (http://landenlabs.com/android/ant-color-logger/index.html) or using ansicon (https://github.com/adoxa/ansicon).
 
 ![Reveal definition](/resources/ansicon.gif "Colorized output")
 
@@ -33,7 +34,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 ## Requirements
 
 For this release the extension requires:
-- You need to point the extension at an existing ant install (using `ant.executable`).
+- Ant version 1.10.7 is now bundled with the extension but you can also point the extension at an existing ant install (using `ant.executable` and `ant.home`).
 - By default your ant build xml file should be in the root directory and be called build.xml but you can conifgure it to look eleswhere.
 - By default any environment variables file should be in the root directory and be called build.env but you can conifgure it to look eleswhere.
 - By default any auto target file should be in the root directory and be called build.auto but you can conifgure it to look eleswhere.
@@ -50,6 +51,8 @@ This extension contributes the following settings:
 * `buildFilenames`: comma separated list of build file names to load. Default is build.xml.
 * `buildFileDirectories`: comma separated list of directories to search for configured file names (build, auto & env files). Default is . .
 * `buildAutoFile`: comma separated list of file names to load auto targets from. Default is build.auto.
+
+The extension will use the built in version of Ant which includes a windows colour library if you don't configure the ant.executable or ant.home settings.
 
 The build.env (or whatever is configured) should be in standard property file format like this:
 ```
@@ -91,13 +94,15 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
+New bundled Ant 1.10.7 with added windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
 New configurable build directories and build files names to search for build file, build.auto and build.env (or whatever you have configured them as).
 Defined directories will be searched in order for the defined filenames in order until the first one is found.
 
 First support for imported build targets so that you can see the targets defined.
 
-## [0.2.0] - 2020-04-19
+## [0.2.0] - 2020-04-27
 ### Added
+- Bundle Ant 1.10.7 with windows colour library by Dennis Lang.
 - Configurable build file directories.
 - Configurable build file names.
 - Support for imported build targets.
