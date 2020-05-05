@@ -100,6 +100,10 @@ Defined directories will be searched in order for the defined filenames in order
 
 First support for imported build targets so that you can see the targets defined.
 
+## [0.2.1] - 2020-05-05
+### Fixed
+- Extension missing README etc
+
 ## [0.2.0] - 2020-05-05
 ### Added
 - Use webpack to bundle extension.

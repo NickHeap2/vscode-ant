@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.2.1] - 2020-05-05
+### Fixed
+- Extension missing README etc
+
 ## [0.2.0] - 2020-05-05
 ### Added
 - Use webpack to bundle extension.
