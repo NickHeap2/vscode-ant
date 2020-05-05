@@ -100,8 +100,9 @@ Defined directories will be searched in order for the defined filenames in order
 
 First support for imported build targets so that you can see the targets defined.
 
-## [0.2.0] - 2020-04-27
+## [0.2.0] - 2020-05-05
 ### Added
+- Use webpack to bundle extension.
 - Bundle Ant 1.10.7 with windows colour library by Dennis Lang.
 - Configurable build file directories.
 - Configurable build file names.
