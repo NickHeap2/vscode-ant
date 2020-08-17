@@ -34,6 +34,12 @@ module.exports = class AntTargetRunner {
     this.envVarsFile = configOptions.get('envVarsFile', 'build.env')
     this.ansiconExe = configOptions.get('ansiconExe', '')
 
+    if (process.platform === 'win32') {
+      this.initialiseCommand = configOptions.get('initialiseCommandOnWin32', '')
+    } else {
+      this.initialiseCommand = configOptions.get('initialiseCommandOnLinux', '')
+    }
+
     this.antHome = configOptions.get('home', '')
     if (this.antHome === '' || typeof this.antHome === 'undefined') {
       this.antHome = path.join(extensionContext.extensionPath, 'dist', 'apache-ant')
@@ -138,6 +144,11 @@ module.exports = class AntTargetRunner {
         }
 
         this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
+      }
+
+      // send an initialise command?
+      if (this.initialiseCommand) {
+        this.antTerminal.sendText(`${this.initialiseCommand}`)
       }
     }
 

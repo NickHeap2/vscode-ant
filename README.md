@@ -48,9 +48,11 @@ This extension contributes the following settings:
 * `ant.sortTargetsAlphabetically`: should the targets be sorted alphabetically by default? Default is true.
 * `ant.envVarsFile`: file name to load env vars from to pass to ant. Default is build.env.
 * `ant.ansiconExe`: Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases).
-* `buildFilenames`: comma separated list of build file names to load. Default is build.xml.
-* `buildFileDirectories`: comma separated list of directories to search for configured file names (build, auto & env files). Default is . .
-* `buildAutoFile`: comma separated list of file names to load auto targets from. Default is build.auto.
+* `ant.buildFilenames`: comma separated list of build file names to load. Default is build.xml.
+* `ant.buildFileDirectories`: comma separated list of directories to search for configured file names (build, auto & env files). Default is . .
+* `ant.buildAutoFile`: comma separated list of file names to load auto targets from. Default is build.auto.
+* `ant.initialiseCommandOnWin32`: command to call when new output console is initialised on win32 platform.
+* `ant.initialiseCommandOnLinux`: command to call when new output console is initialised on linux platform.
 
 The extension will use the built in version of Ant which includes a windows colour library if you don't configure the ant.executable or ant.home settings.
 
@@ -94,11 +96,16 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-New bundled Ant 1.10.7 with added windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
-New configurable build directories and build files names to search for build file, build.auto and build.env (or whatever you have configured them as).
-Defined directories will be searched in order for the defined filenames in order until the first one is found.
+New initialise command that will execute whenever a new terminal window is created.
+I'm using this myself to call 'chcp 65001' to set windows code page to UTF-8 so I can get tick marks in my ablunit output.
 
-First support for imported build targets so that you can see the targets defined.
+Updated dependencies based on Github security reports.
+
+## [0.2.2] - 2020-08-17
+### Added
+- Initialise command that is run when a new terminal window is created.
+### Fixed
+- Updated dependencies based on Github security reports.
 
 ## [0.2.1] - 2020-05-05
 ### Fixed
@@ -112,7 +119,3 @@ First support for imported build targets so that you can see the targets defined
 - Configurable build file names.
 - Support for imported build targets.
 - Prefix window messages with ATR:.
-
-## [0.1.6] - 2019-07-02
-### Added
-- Update dependencies.
