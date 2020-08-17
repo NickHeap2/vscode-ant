@@ -104,6 +104,7 @@ Updated dependencies based on Github security reports.
 ## [0.2.2] - 2020-08-17
 ### Added
 - Initialise command that is run when a new terminal window is created.
+
 ### Fixed
 - Updated dependencies based on Github security reports.
 
