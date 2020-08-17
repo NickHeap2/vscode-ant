@@ -187,7 +187,7 @@
     },
     "dependencies": {
         "dotenv": "^8.2.0",
-        "lodash": "^4.17.13",
+        "lodash": "^4.17.19",
         "minimatch": "^3.0.4",
         "xml2js": "^0.4.22"
     },
