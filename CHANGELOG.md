@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.2.2] - 2020-08-17
+### Added
+- Initialise command that is run when a new terminal window is created.
+
+### Fixed
+- Updated dependencies based on Github security reports.
+
 ## [0.2.1] - 2020-05-05
 ### Fixed
 - Extension missing README etc
