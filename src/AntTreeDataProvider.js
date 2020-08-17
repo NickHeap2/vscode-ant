@@ -45,11 +45,19 @@ module.exports = class AntTreeDataProvider {
     this.buildFileDirectories = '.'
     this.eventListeners = []
 
+    this.rootPaths = []
+    this.buildFileParsers = []
+
     var workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders) {
-      this.rootPath = workspaceFolders[0].uri.fsPath
-      // this.watchBuildXml(workspaceFolders)
-      this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
+      for (const folder of workspaceFolders) {
+        this.rootPaths.push(folder.uri.fsPath)
+        this.buildFileParsers.push(new BuildFileParser(folder.uri.fsPath))
+      }
+
+      // this.rootPath = workspaceFolders[0].uri.fsPath
+      // // this.watchBuildXml(workspaceFolders)
+      // this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
     }
 
     // event for notify of change of data
@@ -75,8 +83,15 @@ module.exports = class AntTreeDataProvider {
     var workspaceFolders = vscode.workspace.workspaceFolders
 
     if (workspaceFolders) {
-      this.rootPath = workspaceFolders[0].uri.fsPath
-      this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
+      this.rootPaths = []
+      this.buildFileParsers = []
+  
+      for (const folder of workspaceFolders) {
+        this.rootPaths.push(folder.uri.fsPath)
+        this.buildFileParsers.push(new BuildFileParser(folder.uri.fsPath))
+      }
+      // this.rootPath = workspaceFolders[0].uri.fsPath
+      // this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
     }
 
     this.refresh()
@@ -209,24 +224,34 @@ module.exports = class AntTreeDataProvider {
   }
 
   getChildren (element) {
-    if (!this.rootPath) {
+    if (this.rootPaths.length <= 0) {
       messageHelper.showInformationMessage('No build.xml in empty workspace.')
       return new Promise((resolve, reject) => {
         resolve([])
         reject(new Error('Failed somehow'))
       })
     }
-    return new Promise((resolve, reject) => {
-      // add root element?
+    return new Promise(async (resolve, reject) => {
+      // add root elements?
       if (!element) {
-        this.getRoots()
-          .then((roots) => {
-            resolve(roots)
-          })
-          .catch((err) => {
-            console.log(err)
-            resolve([])
-          })
+        try {
+          var roots = []
+          for (let i = 0; i < this.rootPaths.length; i++) {
+            roots.push(await this.getRoots(this.rootPaths[i], this.buildFileParsers[i]))
+          }
+          resolve(roots)
+        } catch (err) {
+          console.log(err)
+          resolve([])
+        }
+        // this.getRoots()
+        //   .then((roots) => {
+        //     resolve(roots)
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //     resolve([])
+        //   })
       } else {
         if (element.contextValue === 'antFile' && element.filePath) {
           this.getTargetsInProject()
@@ -263,31 +288,31 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  getRoots () {
+  getRoots (rootPath, buildFileParser) {
     return new Promise(async (resolve, reject) => {
       try {
-        var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
+        var buildFilename = await buildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
         messageHelper.showInformationMessage('Workspace has no build.xml files.')
         return resolve([])
       }
 
       try {
-        var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
+        var buildFileObj = await buildFileParser.parseBuildFile(buildFilename)
       } catch (error) {
         messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
         return reject(new Error('Error reading build.xml!: ' + error))
       }
 
       try {
-        var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
+        var projectDetails = await buildFileParser.getProjectDetails(buildFileObj)
+        var [buildTargets, buildSourceFiles] = await buildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
         messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
 
         // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
-          this.watchBuildFile(this.rootPath, buildSourceFile)
+          this.watchBuildFile(rootPath, buildSourceFile)
         }
 
         var root = {
