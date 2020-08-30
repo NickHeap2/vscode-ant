@@ -11,14 +11,23 @@ var antTreeDataProvider
 // your extension is activated the very first time the command is executed
 function activate (context) {
   antTargetRunner = new AntTargetRunner(context)
-  autoTargetRunner = new AutoTargetRunner(context, antTargetRunner)
-  autoTargetRunner.startWatching()
+  autoTargetRunner = new AutoTargetRunner(context)
+  // autoTargetRunner.startWatching()
 
   antTreeDataProvider = new AntTreeDataProvider(context)
-  antTreeDataProvider.targetRunner = antTargetRunner
+  // antTreeDataProvider.targetRunner = antTargetRunner
 
   var antRunnerView = vscode.window.createTreeView('antRunnerView', {treeDataProvider: antTreeDataProvider})
   context.subscriptions.push(antRunnerView)
+
+  var setRunnerWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.setRunnerWorkspaceFolder', antTargetRunner.setWorkspaceFolder.bind(antTargetRunner))
+  context.subscriptions.push(setRunnerWorkspaceFolder)
+
+  var setAutoWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.setAutoWorkspaceFolder', autoTargetRunner.setWorkspaceFolder.bind(autoTargetRunner))
+  context.subscriptions.push(setAutoWorkspaceFolder)
+
+  var changeWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.changeWorkspaceFolder', antTargetRunner.setWorkspaceFolder.bind(antTargetRunner))
+  context.subscriptions.push(changeWorkspaceFolder)
 
   var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antTargetRunner.nodeRunAntTarget.bind(antTargetRunner))
   context.subscriptions.push(runAntTarget)

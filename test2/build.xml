@@ -1,0 +1,85 @@
+<project name="Test project name" default="default">
+  <property environment="env"/>
+
+  <import file="macrodefs.xml"/>
+  <import file="targets.xml"/>
+
+  <target name="default" depends="clean,compile,test,dist"/>
+
+  <target name="fold space" description="Fold space">
+    <echo message="Folding space..."/>
+  </target>
+
+  <target name="dlc" description="Show dlc!">
+    <echo message="${env.DLC}"/>
+
+
+  </target>
+
+  <target name="clean" description="Clean all the things!">
+    <echo message="All the things are cleaned!"/>
+
+
+
+
+  </target>
+
+  <target name="start_databases">
+    <echo message="Databases are now running."/>
+
+
+
+
+
+  </target>
+
+  <target name="compile" depends="start_databases">
+    <echo message="All the things are compiled!"/>
+
+
+
+
+
+  </target>
+
+  <target name="compile_foldertest" depends="start_databases">
+    <echo message="All the foldertest things are compiled!"/>
+
+
+
+
+
+  </target>
+
+  <target
+    name="test"
+    depends="compile">
+    <echo message="0 test have been run."/>
+
+
+
+
+
+  </target>
+
+  <target name="dist" depends="compile,test">
+    <echo message="We shipped it!"/>
+
+
+
+
+
+  </target>
+
+  <target name="output_test">
+    <echo message="This is an error." level="error"/>
+    <echo message="This is an warning." level="warning"/>
+    <echo message="This is an info." level="info"/>
+    <echo message="This is an verbose." level="verbose"/>
+    <echo message="This is an debug." level="debug"/>
+  </target>
+
+  <target name="more targets with dependency" depends="more targets target">
+    <echo message="This depends on a target in another file."/>
+  </target>
+</project>

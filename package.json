@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -70,6 +70,14 @@
                     "light": "dist/resources/icons/light/refresh.svg",
                     "dark": "dist/resources/icons/dark/refresh.svg"
                 }
+            },
+            {
+              "command": "vscode-ant.setRunnerWorkspaceFolder",
+              "title": "Set the workspace folder for the Ant runner"
+            },
+            {
+              "command": "vscode-ant.setAutoWorkspaceFolder",
+              "title": "Set the workspace folder for the Ant auto runner"
             }
         ],
         "menus": {

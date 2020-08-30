@@ -9,24 +9,20 @@ var extensionContext
 module.exports = class AntTargetRunner {
   constructor (context) {
     extensionContext = context
-    this.rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
     this.autoTargetRunner = null
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     extensionContext.subscriptions.push(onDidChangeConfiguration)
+  }
 
-    var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
-    extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
+  setWorkspaceFolder (workspaceFolder) {
+    this.rootPath = workspaceFolder.uri.fsPath
 
     this.getConfigOptions()
   }
 
   onDidChangeConfiguration () {
     this.getConfigOptions()
-  }
-
-  onDidChangeWorkspaceFolders () {
-    this.rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath
   }
 
   async getConfigOptions () {
@@ -145,6 +141,8 @@ module.exports = class AntTargetRunner {
 
         this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
       }
+
+      this.antTerminal.sendText(`cd ${this.rootPath}`)
 
       // send an initialise command?
       if (this.initialiseCommand) {

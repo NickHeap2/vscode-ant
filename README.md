@@ -7,6 +7,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 
 - Bundled Ant 1.10.7 with a windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
 - Searches for build.xml in the root directory (but you can configure it to look eleswhere) on startup and loads the targets ready to run.
+- Supports multi-folder workspaces by scanning each folder in turn looking for build files.
 - The targets and their dependencies are visualised in a treeview and can be run from the toolbar or the context menu option.
 - Dependencies of dependencies are shown recursively to give a full picture of what will be run and in which order.
 - Targets can be sorted as they appear in the file or in alphabetical order.
@@ -96,10 +97,12 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-New initialise command that will execute whenever a new terminal window is created.
-I'm using this myself to call 'chcp 65001' to set windows code page to UTF-8 so I can get tick marks in my ablunit output.
+Support multi-folder workspaces by scanning each folder in turn looking for build files.
+This is an interim solution until I have time to add full support for multiple build files being loaded at once.
 
-Updated dependencies based on Github security reports.
+## [0.3.0] - 2020-08-30
+### Added
+- Better support workspaces by checking them in order for build files.
 
 ## [0.2.2] - 2020-08-17
 ### Added
@@ -111,12 +114,3 @@ Updated dependencies based on Github security reports.
 ## [0.2.1] - 2020-05-05
 ### Fixed
 - Extension missing README etc
-
-## [0.2.0] - 2020-05-05
-### Added
-- Use webpack to bundle extension.
-- Bundle Ant 1.10.7 with windows colour library by Dennis Lang.
-- Configurable build file directories.
-- Configurable build file names.
-- Support for imported build targets.
-- Prefix window messages with ATR:.

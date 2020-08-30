@@ -38,18 +38,16 @@ module.exports = class AntTreeDataProvider {
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'dependency.svg')
     )
 
-    this.targetRunner = null
     this.targets = null
     this.project = null
     this.buildFilenames = 'build.xml'
     this.buildFileDirectories = '.'
     this.eventListeners = []
 
-    var workspaceFolders = vscode.workspace.workspaceFolders
-    if (workspaceFolders) {
-      this.rootPath = workspaceFolders[0].uri.fsPath
-      // this.watchBuildXml(workspaceFolders)
-      this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
+    this.workspaceFolders = vscode.workspace.workspaceFolders
+    this.workspaceFolderNumber = 0
+    if (this.workspaceFolders) {
+      this.setWorkspaceFolder()
     }
 
     // event for notify of change of data
@@ -66,17 +64,25 @@ module.exports = class AntTreeDataProvider {
     this.getConfigOptions()
   }
 
+  setWorkspaceFolder () {
+    this.rootPath = this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath
+    // this.watchBuildXml(workspaceFolders)
+    this.BuildFileParser = new BuildFileParser(this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
+
+    vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+    vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+  }
+
   onDidChangeConfiguration () {
     this.getConfigOptions()
     this.refresh()
   }
 
   onDidChangeWorkspaceFolders () {
-    var workspaceFolders = vscode.workspace.workspaceFolders
-
-    if (workspaceFolders) {
-      this.rootPath = workspaceFolders[0].uri.fsPath
-      this.BuildFileParser = new BuildFileParser(workspaceFolders[0].uri.fsPath)
+    this.workspaceFolders = vscode.workspace.workspaceFolders
+    this.workspaceFolderNumber = 0
+    if (this.workspaceFolders) {
+      this.setWorkspaceFolder()
     }
 
     this.refresh()
@@ -268,7 +274,14 @@ module.exports = class AntTreeDataProvider {
       try {
         var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
-        messageHelper.showInformationMessage('Workspace has no build.xml files.')
+        if (this.workspaceFolderNumber < (this.workspaceFolders.length - 1)) {
+          this.workspaceFolderNumber++
+          this.setWorkspaceFolder()
+          this.refresh()
+        } else {
+          messageHelper.showInformationMessage('Workspace has no build.xml files.')
+        }
+
         return resolve([])
       }
 
@@ -378,12 +391,12 @@ module.exports = class AntTreeDataProvider {
   }
 
   runSelectedAntTarget () {
-    if (selectedAntTarget && this.targetRunner) {
+    if (selectedAntTarget) {
       var target = selectedAntTarget.name
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      this.targetRunner.runAntTarget({name: target, sourceFile: selectedAntTarget.sourceFile})
+      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 

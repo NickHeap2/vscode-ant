@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.3.0] - 2020-08-30
+### Added
+- Better support multi-folder workspaces by checking them in order for build files.
+
 ## [0.2.2] - 2020-08-17
 ### Added
 - Initialise command that is run when a new terminal window is created.

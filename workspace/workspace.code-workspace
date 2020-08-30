@@ -1,0 +1,21 @@
+{
+	"folders": [
+    {
+      "name": "workspace",
+      "path": "."
+    },
+    {
+      "name": "dist",
+      "path": "..\\dist"
+    },
+    {
+      "name": "test",
+      "path": "..\\test"
+    },
+    {
+      "name": "test2",
+      "path": "..\\test2"
+    }
+  ],
+  "settings": {}
+}

@@ -9,7 +9,7 @@ var extensionContext
 var configOptions
 
 module.exports = class AutoTargetRunner {
-  constructor (context, targetRunner) {
+  constructor (context) {
     extensionContext = context
 
     this.autoFile = ''
@@ -17,23 +17,24 @@ module.exports = class AutoTargetRunner {
     this.buildFileDirectories = '.'
     this.autoFilename = 'build.auto'
 
-    this.targetRunner = targetRunner
     this.autoRunTasks = []
     this.autoTargets = []
 
-    var workspaceFolders = vscode.workspace.workspaceFolders
-    if (workspaceFolders) {
-      this.rootPath = workspaceFolders[0].uri.fsPath
+    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    extensionContext.subscriptions.push(onDidChangeConfiguration)
 
-      this.getConfigOptions()
-    }
+  }
+
+  async setWorkspaceFolder (workspaceFolder) {
+    this.rootPath = workspaceFolder.uri.fsPath
+
+    await this.getConfigOptions()
+    this.startWatching()
   }
 
   startWatching () {
     this.watchAutoTargetsFile()
 
-    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
-    extensionContext.subscriptions.push(onDidChangeConfiguration)
   }
 
   onDidChangeConfiguration () {
@@ -70,7 +71,8 @@ module.exports = class AutoTargetRunner {
     this.autoRunTasks[targets] = setTimeout(() => {
       // console.log('Running entry for:' + targets)
       this.autoRunTasks[targets] = undefined
-      this.targetRunner.runAntTarget({name: targets, sourceFile: sourceFile})
+      // this.targetRunner.runAntTarget({name: targets, sourceFile: sourceFile})
+      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: targets, sourceFile: sourceFile})
     }, delay, targets)
   }
 
