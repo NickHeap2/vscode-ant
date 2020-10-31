@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const filehelper = require('./filehelper')
 const fs = require('fs')
 const path = require('path')
+const _ = require('lodash')
 
 var extensionContext
 
@@ -16,7 +17,7 @@ module.exports = class AntTargetRunner {
   }
 
   setWorkspaceFolder (workspaceFolder) {
-    this.rootPath = workspaceFolder.uri.fsPath
+    this.rootPath = workspaceFolder
 
     this.getConfigOptions()
   }
@@ -102,6 +103,15 @@ module.exports = class AntTargetRunner {
 
     const targets = context.name
     const buildFile = context.sourceFile
+
+    if (!this.antTerminal) {
+      this.antTerminal = _.find(vscode.window.terminals, (o) => {
+        if (o.name === 'Ant Target Runner') {
+          return true
+        }
+        return false
+      })
+    }
 
     if (!this.antTerminal) {
       var envVars = {}

@@ -4,6 +4,7 @@ const filehelper = require('./filehelper')
 const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
+const AntTargetRunner = require('./AntTargetRunner')
 
 var configOptions
 
@@ -100,6 +101,10 @@ module.exports = class AntBuildFileProvider {
           var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(fullBuildFilename, buildFileObj, [], [])
           buildFile.buildTargets = buildTargets
           buildFile.buildSourceFiles = buildSourceFiles
+
+          // create an ant target runnner for this build file
+          buildFile.antTargetRunner = new AntTargetRunner(this.extensionContext)
+          buildFile.antTargetRunner.setWorkspaceFolder(workspaceFolderPath)
 
           messageHelper.showInformationMessage(`Targets loaded from ${fullBuildFilename} !`)
 

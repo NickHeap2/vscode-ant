@@ -237,16 +237,19 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
+  getBuildFile (elementId) {
+    // get details of this buildFile
+    return _.find(this.buildFiles, (o) => {
+      if (o.fullBuildFilename === elementId) {
+        return true
+      }
+      return false
+    })
+  }
+
   getTargetsInProject (element) {
     return new Promise((resolve) => {
-      // get details of this buildFile
-      var buildFile = _.find(this.buildFiles, (o) => {
-        if (o.fullBuildFilename === element.id) {
-          return true
-        }
-        return false
-      })
-
+      var buildFile = this.getBuildFile(element.id)
       if (!buildFile) {
         resolve([])
       }
@@ -312,10 +315,18 @@ module.exports = class AntTreeDataProvider {
   runSelectedAntTarget () {
     if (selectedAntTarget) {
       var target = selectedAntTarget.name
+
+      var buildFile = this.getBuildFile(selectedAntTarget.sourceFile)
+      if (!buildFile) {
+        return
+      }
+
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
+
+      buildFile.antTargetRunner.runAntTarget({name: target, sourceFile: selectedAntTarget.sourceFile})
+      // vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 
