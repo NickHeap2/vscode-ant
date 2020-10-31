@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 
-module.exports = class AntTreeDataProvider {
+module.exports = class BuildFileParser {
   constructor (rootPath) {
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()

@@ -22,7 +22,6 @@ module.exports = class AutoTargetRunner {
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     extensionContext.subscriptions.push(onDidChangeConfiguration)
-
   }
 
   async setWorkspaceFolder (workspaceFolder) {
@@ -34,7 +33,6 @@ module.exports = class AutoTargetRunner {
 
   startWatching () {
     this.watchAutoTargetsFile()
-
   }
 
   onDidChangeConfiguration () {
@@ -53,7 +51,12 @@ module.exports = class AutoTargetRunner {
       this.buildFileDirectories = '.'
     }
 
-    this.autoFile = await this.getBuildAutoFileName(this.rootPath, this.buildFileDirectories, this.autoFilename)
+    try {
+      this.autoFile = await this.getBuildAutoFileName(this.rootPath, this.buildFileDirectories, this.autoFilename)
+    } catch (error) {
+      // it's fine to not exist
+      return
+    }
     this.loadAutoTargets()
   }
 

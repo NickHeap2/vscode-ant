@@ -72,12 +72,16 @@
                 }
             },
             {
-              "command": "vscode-ant.setRunnerWorkspaceFolder",
-              "title": "Set the workspace folder for the Ant runner"
+                "command": "vscode-ant.setRunnerWorkspaceFolder",
+                "title": "Set the workspace folder for the Ant runner"
             },
             {
-              "command": "vscode-ant.setAutoWorkspaceFolder",
-              "title": "Set the workspace folder for the Ant auto runner"
+                "command": "vscode-ant.setAutoWorkspaceFolder",
+                "title": "Set the workspace folder for the Ant auto runner"
+            },
+            {
+              "command": "vscode-ant.buildFilesChanged",
+              "title": "Signal build files have changed for tree view"
             }
         ],
         "menus": {
@@ -174,10 +178,10 @@
                     "description": "Command to call when new output console is initialised on win32 platform."
                 },
                 "ant.initialiseCommandOnLinux": {
-                  "type": "string",
-                  "default": "",
-                  "description": "Command to call when new output console is initialised on linux platform."
-              }
+                    "type": "string",
+                    "default": "",
+                    "description": "Command to call when new output console is initialised on linux platform."
+                }
             }
         }
     },
@@ -193,15 +197,17 @@
         "webpack-dev": "webpack --mode development --watch"
     },
     "devDependencies": {
-        "@types/mocha": "^7.0.2",
-        "@types/node": "^13.13.15",
-        "@types/vscode": "^1.18.0",
+        "@types/mocha": "^8.0.3",
+        "@types/node": "^14.14.6",
+        "@types/vscode": "^1.50.0",
         "chai": "^4.2.0",
-        "copy-webpack-plugin": "^6.0.3",
-        "eslint": "^6.8.0",
-        "vscode-test": "^1.4.0",
-        "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12"
+        "copy-webpack-plugin": "^6.2.1",
+        "eslint": "^7.12.1",
+        "npm": "^6.14.8",
+        "vscode": "^1.1.37",
+        "vscode-test": "^1.4.1",
+        "webpack": "^5.3.2",
+        "webpack-cli": "^4.1.0"
     },
     "dependencies": {
         "dotenv": "^8.2.0",
