@@ -1,8 +1,7 @@
 const vscode = require('vscode')
 const _ = require('lodash')
-// const filehelper = require('./filehelper')
+const filehelper = require('./filehelper')
 const path = require('path')
-// const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
 
 var darkDefault
@@ -308,8 +307,51 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
+  nodeRunAntTarget (context) {
+    if (!context) {
+      return
+    }
+
+    var target = context.name
+    if (target.indexOf(' ') >= 0) {
+      target = '"' + target + '"'
+    }
+
+    var buildFile = this.getBuildFile(context.sourceFile)
+    if (!buildFile) {
+      return
+    }
+
+    buildFile.antTargetRunner.runAntTarget({name: target, sourceFile: context.sourceFile})
+  }
+
   selectedAntTarget (targetElement) {
     selectedAntTarget = targetElement
+  }
+
+  revealDefinition (target) {
+    var buildFile = this.getBuildFile(target.sourceFile)
+    if (!buildFile) {
+      return
+    }
+
+    vscode.workspace.openTextDocument(target.sourceFile)
+      .then((document) => {
+        return vscode.window.showTextDocument(document)
+      })
+      .then((textEditor) => {
+        // find the line
+        let text = textEditor.document.getText()
+        let regexp = new RegExp('target[.\\s]+name[\\s]*=["\']' + target.name + '["\']', 'gm')
+        let offset = regexp.exec(text)
+        if (offset) {
+          let position = textEditor.document.positionAt(offset.index)
+          // reveal the position in the center
+          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
+          // position the cursor
+          textEditor.selection = new vscode.Selection(position, position);
+        }
+      })
   }
 
   runSelectedAntTarget () {

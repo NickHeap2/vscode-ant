@@ -24,6 +24,7 @@ module.exports = class AntBuildFileProvider {
     this.buildFilenames = 'build.xml'
     this.buildFileDirectories = '.'
     this.eventListeners = []
+    this.buildFiles = []
 
     this.workspaceFolders = vscode.workspace.workspaceFolders
 
@@ -128,6 +129,11 @@ module.exports = class AntBuildFileProvider {
   }
 
   async refresh () {
+    // clean up target runners
+    for (const buildFile of this.buildFiles) {
+      delete buildFile.antTargetRunner
+    }
+
     // remove event listeners
     for (const eventListener of this.eventListeners) {
       eventListener.didChangeListener.dispose()

@@ -12,8 +12,12 @@ module.exports = class AntTargetRunner {
     extensionContext = context
     this.autoTargetRunner = null
 
-    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    const onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     extensionContext.subscriptions.push(onDidChangeConfiguration)
+
+    // target runner needs to know when the terminal closes
+    const terminalClosed = vscode.window.onDidCloseTerminal(this.terminalClosed.bind(this))
+    context.subscriptions.push(terminalClosed)
   }
 
   setWorkspaceFolder (workspaceFolder) {
@@ -81,19 +85,6 @@ module.exports = class AntTargetRunner {
       this.antTerminal.dispose()
       this.antTerminal = null
     }
-  }
-
-  nodeRunAntTarget (context) {
-    if (!context) {
-      return
-    }
-
-    var target = context.name
-    if (target.indexOf(' ') >= 0) {
-      target = '"' + target + '"'
-    }
-
-    this.runAntTarget({ name: target, sourceFile: context.sourceFile })
   }
 
   runAntTarget (context) {
@@ -171,23 +162,6 @@ module.exports = class AntTargetRunner {
     }
 
     this.antTerminal.show(true)
-  }
-
-  revealDefinition (target) {
-    vscode.workspace.openTextDocument(filehelper.getRootFile(this.rootPath, target.sourceFile))
-      .then((document) => {
-        return vscode.window.showTextDocument(document)
-      })
-      .then((textEditor) => {
-        // find the line
-        let text = textEditor.document.getText()
-        let regexp = new RegExp('target[.\\s]+name[\\s]*=["\']' + target.name + '["\']', 'gm')
-        let offset = regexp.exec(text)
-        if (offset) {
-          let position = textEditor.document.positionAt(offset.index)
-          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
-        }
-      })
   }
 
   terminalClosed (terminal) {
