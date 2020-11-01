@@ -344,7 +344,9 @@ module.exports = class AntTreeDataProvider {
           // reveal the position in the center
           textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
           // position the cursor
-          textEditor.selection = new vscode.Selection(position, position);
+          let startSelection = textEditor.document.positionAt(offset.index)
+          let endSelection = textEditor.document.positionAt(offset.index + offset[0].length)
+          textEditor.selection = new vscode.Selection(startSelection, endSelection)
         }
       })
   }
