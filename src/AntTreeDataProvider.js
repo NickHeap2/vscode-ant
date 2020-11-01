@@ -330,11 +330,6 @@ module.exports = class AntTreeDataProvider {
   }
 
   revealDefinition (target) {
-    var buildFile = this.getBuildFile(target.sourceFile)
-    if (!buildFile) {
-      return
-    }
-
     vscode.workspace.openTextDocument(target.sourceFile)
       .then((document) => {
         return vscode.window.showTextDocument(document)
