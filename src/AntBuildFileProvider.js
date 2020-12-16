@@ -76,6 +76,7 @@ module.exports = class AntBuildFileProvider {
         return resolve(this.buildFiles)
       }
 
+      // loop workspace folders
       for (const workspaceFolder of this.workspaceFolders) {
         const workspaceFolderPath = workspaceFolder.uri.fsPath
         try {
@@ -92,11 +93,28 @@ module.exports = class AntBuildFileProvider {
         } catch (error) {
           messageHelper.showErrorMessage(`Error reading ${buildFilename} !`)
           // return reject(new Error('Error reading build.xml!: ' + error))
+
+          var errorFile = {
+            buildFilename: buildFilename,
+            fullBuildFilename: fullBuildFilename,
+            projectDetails: {},
+            buildTargets: [],
+            buildSourceFiles: [],
+            errorMessage: 'Error reading file!'
+          }
+          this.buildFiles.push(errorFile)
+
           continue
         }
 
         try {
-          var buildFile = { buildFilename: buildFilename, fullBuildFilename: fullBuildFilename, projectDetails: {}, buildTargets: [], buildSourceFiles: [] }
+          var buildFile = {
+            buildFilename: buildFilename,
+            fullBuildFilename: fullBuildFilename,
+            projectDetails: {},
+            buildTargets: [],
+            buildSourceFiles: []
+          }
           buildFile.projectDetails = this.BuildFileParser.getProjectDetails(buildFileObj)
 
           var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(fullBuildFilename, buildFileObj, [], [])
