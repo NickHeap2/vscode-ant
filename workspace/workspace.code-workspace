@@ -9,6 +9,10 @@
       "path": "..\\dist"
     },
     {
+      "name": "ablunit-mods",
+      "path": "..\\..\\ablunit-mods\\ablunit-mods"
+    },
+    {
       "name": "test",
       "path": "..\\test"
     },

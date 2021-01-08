@@ -2,7 +2,6 @@ const vscode = require('vscode')
 const _ = require('lodash')
 const filehelper = require('./filehelper')
 const path = require('path')
-const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
 
 var darkDefault
@@ -39,16 +38,8 @@ module.exports = class AntTreeDataProvider {
     )
 
     this.targets = null
-    this.project = null
-    this.buildFilenames = 'build.xml'
-    this.buildFileDirectories = '.'
     this.eventListeners = []
-
-    this.workspaceFolders = vscode.workspace.workspaceFolders
-    this.workspaceFolderNumber = 0
-    if (this.workspaceFolders) {
-      this.setWorkspaceFolder()
-    }
+    this.buildFiles = []
 
     // event for notify of change of data
     this._onDidChangeTreeData = new vscode.EventEmitter()
@@ -58,19 +49,21 @@ module.exports = class AntTreeDataProvider {
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeConfiguration)
 
-    var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
-    this.extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
-
     this.getConfigOptions()
   }
 
-  setWorkspaceFolder () {
-    this.rootPath = this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath
-    // this.watchBuildXml(workspaceFolders)
-    this.BuildFileParser = new BuildFileParser(this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
+  // setWorkspaceFolder () {
+  //   this.rootPath = this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath
+  //   // this.watchBuildXml(workspaceFolders)
+  //   this.BuildFileParser = new BuildFileParser(this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
 
-    vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
-    vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+  //   vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+  //   vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+  // }
+
+  onBuildFilesChanges (buildFiles) {
+    this.buildFiles = buildFiles
+    this.refresh()
   }
 
   onDidChangeConfiguration () {
@@ -78,55 +71,9 @@ module.exports = class AntTreeDataProvider {
     this.refresh()
   }
 
-  onDidChangeWorkspaceFolders () {
-    this.workspaceFolders = vscode.workspace.workspaceFolders
-    this.workspaceFolderNumber = 0
-    if (this.workspaceFolders) {
-      this.setWorkspaceFolder()
-    }
-
-    this.refresh()
-  }
-
-  watchBuildFile (rootPath, buildFileName) {
-    const buildFile = filehelper.getRootFile(this.rootPath, buildFileName)
-    this.watchFile(buildFile)
-  }
-
-  watchFile (globPattern) {
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(globPattern)
-    this.extensionContext.subscriptions.push(fileSystemWatcher)
-
-    this.eventListeners.push({
-      filename: globPattern,
-      fileSystemWatcher: fileSystemWatcher,
-      didChangeListener: fileSystemWatcher.onDidChange(() => {
-        this.refresh()
-      }, this, this.extensionContext.subscriptions),
-      didDeleteListener: fileSystemWatcher.onDidDelete(() => {
-        this.refresh()
-      }, this, this.extensionContext.subscriptions),
-      didCreateListener: fileSystemWatcher.onDidCreate(() => {
-        this.refresh()
-      }, this, this.extensionContext.subscriptions)
-    })
-  }
-
   getConfigOptions () {
     configOptions = vscode.workspace.getConfiguration('ant', null)
     this.sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
-    this.buildFilenames = configOptions.get('buildFilenames', 'build.xml')
-    if (this.buildFilenames === '' || typeof this.buildFilenames === 'undefined') {
-      this.buildFilenames = 'build.xml'
-    }
-    this.buildFileDirectories = configOptions.get('buildFileDirectories', '.')
-    if (this.buildFileDirectories === '' || typeof this.buildFileDirectories === 'undefined') {
-      this.buildFileDirectories = '.'
-    }
-  }
-
-  removeSubscription (item) {
-    this.extensionContext.subscriptions.splice(this.extensionContext.subscriptions.indexOf(item), 1)
   }
 
   refresh () {
@@ -145,7 +92,7 @@ module.exports = class AntTreeDataProvider {
   getTreeItem (element) {
     if (element.contextValue === 'antFile') {
       let treeItem = {
-        id: element.filePath,
+        id: element.id + '_' + element.filePath,
         contextValue: element.contextValue,
         label: element.fileName,
         command: '',
@@ -158,7 +105,7 @@ module.exports = class AntTreeDataProvider {
       return treeItem
     } else if (element.contextValue === 'antTarget') {
       let treeItem = {
-        id: element.name,
+        // id: element.id + '_' + element.name,
         label: element.name,
         command: {
           arguments: [element],
@@ -174,7 +121,7 @@ module.exports = class AntTreeDataProvider {
       } else {
         treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None
       }
-      if (element.name === this.project.default) {
+      if (element.isDefault) {
         treeItem.iconPath = {
           light: lightDefault,
           dark: darkDefault
@@ -189,6 +136,7 @@ module.exports = class AntTreeDataProvider {
       return treeItem
     } else if (element.contextValue === 'antDepends') {
       let treeItem = {
+        // id: element.id + '_' + element.name,
         label: element.name,
         command: {
           arguments: [element],
@@ -215,7 +163,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   getChildren (element) {
-    if (!this.rootPath) {
+    if (this.buildFiles.length === 0) {
       messageHelper.showInformationMessage('No build.xml in empty workspace.')
       return new Promise((resolve, reject) => {
         resolve([])
@@ -225,6 +173,7 @@ module.exports = class AntTreeDataProvider {
     return new Promise((resolve, reject) => {
       // add root element?
       if (!element) {
+        // add file roots
         this.getRoots()
           .then((roots) => {
             resolve(roots)
@@ -235,7 +184,7 @@ module.exports = class AntTreeDataProvider {
           })
       } else {
         if (element.contextValue === 'antFile' && element.filePath) {
-          this.getTargetsInProject()
+          this.getTargetsInProject(element)
             .then((targets) => {
               resolve(targets)
             })
@@ -271,76 +220,48 @@ module.exports = class AntTreeDataProvider {
 
   getRoots () {
     return new Promise(async (resolve, reject) => {
-      try {
-        var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
-      } catch (error) {
-        if (this.workspaceFolderNumber < (this.workspaceFolders.length - 1)) {
-          this.workspaceFolderNumber++
-          this.setWorkspaceFolder()
-          this.refresh()
-        } else {
-          messageHelper.showInformationMessage('Workspace has no build.xml files.')
-        }
-
-        return resolve([])
-      }
-
-      try {
-        var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
-      } catch (error) {
-        messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
-        return reject(new Error('Error reading build.xml!: ' + error))
-      }
-
-      try {
-        var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
-
-        messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
-
-        // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
-        for (const buildSourceFile of buildSourceFiles) {
-          this.watchBuildFile(this.rootPath, buildSourceFile)
-        }
-
-        var root = {
-          id: buildFilename,
+      var roots = []
+      for (let buildFile of this.buildFiles) {
+        var buildFileroot = {
+          id: buildFile.fullBuildFilename,
           contextValue: 'antFile',
-          filePath: path.dirname(buildFilename),
-          fileName: path.basename(buildFilename),
-          project: projectDetails.name
+          filePath: path.dirname(buildFile.fullBuildFilename),
+          fileName: path.basename(buildFile.fullBuildFilename),
+          project: buildFile.projectDetails.name
         }
-
-        this.project = projectDetails
-        this.targets = buildTargets
-
-        resolve([root])
-      } catch (error) {
-        messageHelper.showErrorMessage('Error parsing build.xml!')
-        return reject(new Error('Error parsing build.xml!:' + error))
+        roots.push(buildFileroot)
       }
+
+      resolve(roots)
     })
   }
 
-  getTargetsInProject () {
+  getBuildFile (elementId) {
+    // get details of this buildFile
+    return _.find(this.buildFiles, (o) => {
+      if (o.fullBuildFilename === elementId) {
+        return true
+      }
+      return false
+    })
+  }
+
+  getTargetsInProject (element) {
     return new Promise((resolve) => {
-      // var targets = project.target.map((target) => {
-      //   var antTarget = {
-      //     id: target.$.name,
-      //     contextValue: 'antTarget',
-      //     depends: target.$.depends,
-      //     name: target.$.name
-      //   }
-      //   return antTarget
-      // })
-      let targets = this.targets.map((target) => {
+      var buildFile = this.getBuildFile(element.id)
+      if (!buildFile) {
+        resolve([])
+      }
+
+      let targets = buildFile.buildTargets.map((target) => {
         var antTarget = {
-          id: target.name,
+          id: buildFile.fullBuildFilename + '_' + target.name,
           contextValue: 'antTarget',
           sourceFile: target.sourceFile,
           depends: target.depends,
           description: target.description,
-          name: target.name
+          name: target.name,
+          isDefault: (target.name === buildFile.projectDetails.default)
         }
         return antTarget
       })
@@ -386,17 +307,65 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
+  nodeRunAntTarget (context) {
+    if (!context) {
+      return
+    }
+
+    var target = context.name
+    if (target.indexOf(' ') >= 0) {
+      target = '"' + target + '"'
+    }
+
+    var buildFile = this.getBuildFile(context.sourceFile)
+    if (!buildFile) {
+      return
+    }
+
+    buildFile.antTargetRunner.runAntTarget({name: target, sourceFile: context.sourceFile})
+  }
+
   selectedAntTarget (targetElement) {
     selectedAntTarget = targetElement
+  }
+
+  revealDefinition (target) {
+    vscode.workspace.openTextDocument(target.sourceFile)
+      .then((document) => {
+        return vscode.window.showTextDocument(document)
+      })
+      .then((textEditor) => {
+        // find the line
+        let text = textEditor.document.getText()
+        let regexp = new RegExp('target[.\\s]+name[\\s]*=["\']' + target.name + '["\']', 'gm')
+        let offset = regexp.exec(text)
+        if (offset) {
+          let position = textEditor.document.positionAt(offset.index)
+          // reveal the position in the center
+          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
+          // position the cursor
+          let startSelection = textEditor.document.positionAt(offset.index)
+          let endSelection = textEditor.document.positionAt(offset.index + offset[0].length)
+          textEditor.selection = new vscode.Selection(startSelection, endSelection)
+        }
+      })
   }
 
   runSelectedAntTarget () {
     if (selectedAntTarget) {
       var target = selectedAntTarget.name
+
+      var buildFile = this.getBuildFile(selectedAntTarget.sourceFile)
+      if (!buildFile) {
+        return
+      }
+
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
+
+      buildFile.antTargetRunner.runAntTarget({name: target, sourceFile: selectedAntTarget.sourceFile})
+      // vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 

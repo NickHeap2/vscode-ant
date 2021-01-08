@@ -1,62 +1,49 @@
 const vscode = require('vscode')
 const AntTreeDataProvider = require('./AntTreeDataProvider')
-const AntTargetRunner = require('./AntTargetRunner')
-const AutoTargetRunner = require('./AutoTargetRunner')
+const AntBuildFileProvider = require('./AntBuildFileProvider')
 
-var antTargetRunner
-var autoTargetRunner
 var antTreeDataProvider
+var antBuildFileProvider
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate (context) {
-  antTargetRunner = new AntTargetRunner(context)
-  autoTargetRunner = new AutoTargetRunner(context)
-  // autoTargetRunner.startWatching()
-
   antTreeDataProvider = new AntTreeDataProvider(context)
-  // antTreeDataProvider.targetRunner = antTargetRunner
+  antBuildFileProvider = new AntBuildFileProvider(context)
 
-  var antRunnerView = vscode.window.createTreeView('antRunnerView', {treeDataProvider: antTreeDataProvider})
+  const antRunnerView = vscode.window.createTreeView('antRunnerView', {treeDataProvider: antTreeDataProvider})
   context.subscriptions.push(antRunnerView)
 
-  var setRunnerWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.setRunnerWorkspaceFolder', antTargetRunner.setWorkspaceFolder.bind(antTargetRunner))
-  context.subscriptions.push(setRunnerWorkspaceFolder)
+  const buildFilesChanged = vscode.commands.registerCommand('vscode-ant.buildFilesChanged', antTreeDataProvider.onBuildFilesChanges.bind(antTreeDataProvider))
+  context.subscriptions.push(buildFilesChanged)
 
-  var setAutoWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.setAutoWorkspaceFolder', autoTargetRunner.setWorkspaceFolder.bind(autoTargetRunner))
-  context.subscriptions.push(setAutoWorkspaceFolder)
-
-  var changeWorkspaceFolder = vscode.commands.registerCommand('vscode-ant.changeWorkspaceFolder', antTargetRunner.setWorkspaceFolder.bind(antTargetRunner))
-  context.subscriptions.push(changeWorkspaceFolder)
-
-  var runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antTargetRunner.nodeRunAntTarget.bind(antTargetRunner))
+  const runAntTarget = vscode.commands.registerCommand('vscode-ant.runAntTarget', antTreeDataProvider.nodeRunAntTarget.bind(antTreeDataProvider))
   context.subscriptions.push(runAntTarget)
 
-  var revealDefinition = vscode.commands.registerCommand('vscode-ant.revealDefinition', antTargetRunner.revealDefinition.bind(antTargetRunner))
+  const revealDefinition = vscode.commands.registerCommand('vscode-ant.revealDefinition', antTreeDataProvider.revealDefinition.bind(antTreeDataProvider))
   context.subscriptions.push(revealDefinition)
 
-  var runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antTargetRunner.nodeRunAntTarget.bind(antTargetRunner))
+  const runAntDependency = vscode.commands.registerCommand('vscode-ant.runAntDependency', antTreeDataProvider.nodeRunAntTarget.bind(antTreeDataProvider))
   context.subscriptions.push(runAntDependency)
 
-  var selectedAntTarget = vscode.commands.registerCommand('vscode-ant.selectedAntTarget', antTreeDataProvider.selectedAntTarget.bind(antTreeDataProvider))
+  const selectedAntTarget = vscode.commands.registerCommand('vscode-ant.selectedAntTarget', antTreeDataProvider.selectedAntTarget.bind(antTreeDataProvider))
   context.subscriptions.push(selectedAntTarget)
 
-  var runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', antTreeDataProvider.runSelectedAntTarget.bind(antTreeDataProvider))
+  const runSelectedAntTarget = vscode.commands.registerCommand('vscode-ant.runSelectedAntTarget', antTreeDataProvider.runSelectedAntTarget.bind(antTreeDataProvider))
   context.subscriptions.push(runSelectedAntTarget)
 
-  var refreshAntTargets = vscode.commands.registerCommand('vscode-ant.refreshAntTargets', refresh)
+  const refreshAntTargets = vscode.commands.registerCommand('vscode-ant.refreshAntTargets', refresh)
   context.subscriptions.push(refreshAntTargets)
-
-  // target runner needs to know when the terminal closes
-  var terminalClosed = vscode.window.onDidCloseTerminal(antTargetRunner.terminalClosed, antTargetRunner)
-  context.subscriptions.push(terminalClosed)
 }
 exports.activate = activate
 
 function refresh () {
-  antTargetRunner.onDidChangeConfiguration()
-  autoTargetRunner.onDidChangeConfiguration()
-  antTreeDataProvider.refresh()
+  if (antBuildFileProvider) {
+    antBuildFileProvider.refresh()
+  }
+  if (antTreeDataProvider) {
+    antBuildFileProvider.refresh()
+  }
 }
 
 // this method is called when your extension is deactivated

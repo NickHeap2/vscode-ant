@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 
-module.exports = class AntTreeDataProvider {
+module.exports = class BuildFileParser {
   constructor (rootPath) {
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
@@ -117,19 +117,6 @@ module.exports = class AntTreeDataProvider {
               return reject(new Error('Error parsing build.xml!:' + err))
             } else {
               return resolve(result)
-              // project = this.setParentValues(result.project)
-
-              // var root = {
-              //   id: 'build.xml',
-              //   contextValue: 'antFile',
-              //   filePath: buildXml,
-              //   fileName: 'build.xml'
-              // }
-              // if (project.$.name) {
-              //   root.project = project.$.name
-              // }
-
-              // resolve([root])
             }
           })
         })

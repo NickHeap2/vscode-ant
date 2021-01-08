@@ -39,6 +39,17 @@
             ]
         },
         {
+            "name": "Extension test ablunit",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "D:/workspaces/nickheap2/ablunit-mods/ablunit-mods"
+            ]
+        },
+        {
             "name": "Extension Tests",
             "type": "extensionHost",
             "request": "launch",
