@@ -199,6 +199,7 @@
         "chai": "^4.2.0",
         "copy-webpack-plugin": "^6.0.3",
         "eslint": "^6.8.0",
+        "vsce": "^1.87.0",
         "vscode-test": "^1.4.0",
         "webpack": "^4.44.1",
         "webpack-cli": "^3.3.12"
