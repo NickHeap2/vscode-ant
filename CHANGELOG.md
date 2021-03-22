@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.3.1] - 2021-03-22
+### Fixed
+- Fix security audits.
+- Fix cd command for folders with spaces in to use quotes.
+
 ## [0.3.0] - 2020-08-30
 ### Added
 - Better support multi-folder workspaces by checking them in order for build files.

@@ -142,7 +142,7 @@ module.exports = class AntTargetRunner {
         this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
       }
 
-      this.antTerminal.sendText(`cd ${this.rootPath}`)
+      this.antTerminal.sendText(`cd "${this.rootPath}"`)
 
       // send an initialise command?
       if (this.initialiseCommand) {

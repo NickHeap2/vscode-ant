@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -72,12 +72,12 @@
                 }
             },
             {
-              "command": "vscode-ant.setRunnerWorkspaceFolder",
-              "title": "Set the workspace folder for the Ant runner"
+                "command": "vscode-ant.setRunnerWorkspaceFolder",
+                "title": "Set the workspace folder for the Ant runner"
             },
             {
-              "command": "vscode-ant.setAutoWorkspaceFolder",
-              "title": "Set the workspace folder for the Ant auto runner"
+                "command": "vscode-ant.setAutoWorkspaceFolder",
+                "title": "Set the workspace folder for the Ant auto runner"
             }
         ],
         "menus": {
@@ -174,10 +174,10 @@
                     "description": "Command to call when new output console is initialised on win32 platform."
                 },
                 "ant.initialiseCommandOnLinux": {
-                  "type": "string",
-                  "default": "",
-                  "description": "Command to call when new output console is initialised on linux platform."
-              }
+                    "type": "string",
+                    "default": "",
+                    "description": "Command to call when new output console is initialised on linux platform."
+                }
             }
         }
     },

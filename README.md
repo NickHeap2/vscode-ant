@@ -97,8 +97,13 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-Support multi-folder workspaces by scanning each folder in turn looking for build files.
-This is an interim solution until I have time to add full support for multiple build files being loaded at once.
+Resolve the GitHub dependabot alerts.
+Fix an isue with workspace folders that have spaces in them failing to cd as I'd forgotten to add quotes around the directory name.
+
+## [0.3.1] - 2021-03-22
+### Fixed
+- Fix security audits.
+- Fix cd command for folders with spaces in to use quotes.
 
 ## [0.3.0] - 2020-08-30
 ### Added

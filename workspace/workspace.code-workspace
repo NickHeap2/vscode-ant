@@ -15,6 +15,10 @@
     {
       "name": "test2",
       "path": "..\\test2"
+    },
+    {
+      "name": "test with space",
+      "path": "..\\test with space"
     }
   ],
   "settings": {}

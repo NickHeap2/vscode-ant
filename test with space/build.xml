@@ -1,0 +1,8 @@
+<project name="Test workspace folder with space" default="default">
+  <property environment="env"/>
+
+  <target name="default" depends="">
+    <echo message="Workspace folders with spaces in will work!"/>
+  </target>
+
+</project>
