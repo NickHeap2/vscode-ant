@@ -98,7 +98,10 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 ## Release Notes
 
 Resolve the GitHub dependabot alerts.
-Fix an isue with workspace folders that have spaces in them failing to cd as I'd forgotten to add quotes around the directory name.
+
+## [0.3.2] - 2022-03-08
+### Fixed
+- Updated dependencies based on Github security reports.
 
 ## [0.3.1] - 2021-03-22
 ### Fixed
