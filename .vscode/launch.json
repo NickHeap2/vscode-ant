@@ -28,6 +28,17 @@
             ]
         },
         {
+            "name": "Extension test_target_names folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test_target_names"
+            ]
+        },
+        {
             "name": "Extension test workspace",
             "type": "extensionHost",
             "request": "launch",

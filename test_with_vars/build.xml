@@ -1,0 +1,13 @@
+<project name="Test target names" default="default">
+  <property environment="env"/>
+  <import file="${basedir}/build-import.xml" />
+
+  <target name="d targetmore" description="Check substring" depends="d target">
+    <echo message="This should work!"/>
+  </target>
+
+  <target name="d target" depends="">
+    <echo message="This should work!"/>
+  </target>
+
+</project>
