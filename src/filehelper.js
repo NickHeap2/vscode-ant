@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-function findfirstFile (rootPath, searchDirectories, searchFileNames) {
+function findFirstFile (rootPath, searchDirectories, searchFileNames) {
   return new Promise((resolve, reject) => {
     for (const searchDirectory of searchDirectories) {
       for (const searchFileName of searchFileNames) {
@@ -15,7 +15,7 @@ function findfirstFile (rootPath, searchDirectories, searchFileNames) {
     return reject(new Error('No file found!'))
   })
 }
-exports.findfirstFile = findfirstFile
+exports.findFirstFile = findFirstFile
 
 function pathExists (p) {
   try {

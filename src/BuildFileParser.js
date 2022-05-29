@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 
-module.exports = class AntTreeDataProvider {
+module.exports = class BuildFileParser {
   constructor (rootPath) {
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
@@ -14,7 +14,7 @@ module.exports = class AntTreeDataProvider {
   findBuildFile (searchDirectories, searchFileNames) {
     return new Promise(async (resolve, reject) => {
       try {
-        var filename = await filehelper.findfirstFile(this.rootPath, searchDirectories, searchFileNames)
+        var filename = await filehelper.findFirstFile(this.rootPath, searchDirectories, searchFileNames)
         resolve(filename)
       } catch (error) {
         return reject(new Error('No build file found!'))

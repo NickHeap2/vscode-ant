@@ -70,7 +70,7 @@ module.exports = class AntTargetRunner {
       this.envVarsFile = 'build.env'
     }
 
-    this.envVarsFile = await filehelper.findfirstFile(this.rootPath, this.buildFileDirectories.split(','), this.envVarsFile.split(','))
+    this.envVarsFile = await filehelper.findFirstFile(this.rootPath, this.buildFileDirectories.split(','), this.envVarsFile.split(','))
 
     if (this.antTerminal) {
       this.antTerminal.dispose()
