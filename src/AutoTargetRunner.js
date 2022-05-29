@@ -22,7 +22,6 @@ module.exports = class AutoTargetRunner {
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     extensionContext.subscriptions.push(onDidChangeConfiguration)
-
   }
 
   async setWorkspaceFolder (workspaceFolder) {
@@ -94,7 +93,7 @@ module.exports = class AutoTargetRunner {
   getBuildAutoFileName (rootPath, searchDirectories, searchFileNames) {
     return new Promise(async (resolve, reject) => {
       try {
-        var filename = await filehelper.findfirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
+        var filename = await filehelper.findFirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
         resolve(filename)
       } catch (error) {
         return reject(new Error('No build file found!'))
