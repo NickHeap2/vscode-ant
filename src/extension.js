@@ -12,7 +12,7 @@ var antTreeDataProvider
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate (context) {
-  antWrapper = new AntWrapper(context)
+  // antWrapper = new AntWrapper(context)
   antTargetRunner = new AntTargetRunner(context)
   autoTargetRunner = new AutoTargetRunner(context)
   // autoTargetRunner.startWatching()
@@ -57,7 +57,7 @@ function activate (context) {
 exports.activate = activate
 
 function refresh () {
-  antWrapper.onDidChangeConfiguration()
+  // antWrapper.onDidChangeConfiguration()
   antTargetRunner.onDidChangeConfiguration()
   autoTargetRunner.onDidChangeConfiguration()
   antTreeDataProvider.refresh()
