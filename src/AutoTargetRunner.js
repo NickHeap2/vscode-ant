@@ -1,7 +1,7 @@
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const fs = require('fs')
 const vscode = require('vscode')
-const util = require('./filehelper')
+const util = require('./fileHelper')
 const minimatch = require('minimatch')
 const messageHelper = require('./messageHelper')
 
@@ -93,7 +93,7 @@ module.exports = class AutoTargetRunner {
   getBuildAutoFileName (rootPath, searchDirectories, searchFileNames) {
     return new Promise(async (resolve, reject) => {
       try {
-        var filename = await filehelper.findFirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
+        var filename = await fileHelper.findFirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
         resolve(filename)
       } catch (error) {
         return reject(new Error('No build file found!'))
@@ -112,7 +112,7 @@ module.exports = class AutoTargetRunner {
       }
     }
 
-    var autoPathName = filehelper.getRootFile(this.rootPath, this.autoFile)
+    var autoPathName = fileHelper.getRootFile(this.rootPath, this.autoFile)
 
     if (util.pathExists(autoPathName)) {
       fs.readFile(autoPathName, 'utf-8', (err, data) => {

@@ -153,6 +153,11 @@
                     "default": "",
                     "description": "Ansicon executable (e.g. D:/tools/ansicon/ansicon.exe) for colorization on windows. Download from (https://github.com/adoxa/ansicon/releases)."
                 },
+                "ant.useAntForParsing": {
+                    "type": "boolean",
+                    "default": "false",
+                    "description": "Use ant command line to parse the build file."
+                },
                 "ant.buildFilenames": {
                     "type": "string",
                     "default": "build.xml",
@@ -192,6 +197,7 @@
         "webpack-dev": "webpack --mode development --watch"
     },
     "devDependencies": {
+        "@types/jest": "^27.5.1",
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.13.52",
         "@types/vscode": "^1.18.1",
@@ -199,6 +205,7 @@
         "chai": "^4.3.6",
         "copy-webpack-plugin": "^6.4.1",
         "eslint": "^8.10.0",
+        "jest": "^28.1.0",
         "vsce": "^2.6.7",
         "vscode-test": "^1.6.1",
         "webpack": "^5.70.0",

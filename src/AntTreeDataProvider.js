@@ -1,6 +1,6 @@
 const vscode = require('vscode')
 const _ = require('lodash')
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
@@ -67,7 +67,7 @@ module.exports = class AntTreeDataProvider {
   setWorkspaceFolder () {
     this.rootPath = this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath
     // this.watchBuildXml(workspaceFolders)
-    this.BuildFileParser = new BuildFileParser(this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
+    this.BuildFileParser = new BuildFileParser(this.extensionContext, this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
 
     vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
     vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
@@ -89,7 +89,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   watchBuildFile (rootPath, buildFileName) {
-    const buildFile = filehelper.getRootFile(this.rootPath, buildFileName)
+    const buildFile = fileHelper.getRootFile(this.rootPath, buildFileName)
     this.watchFile(buildFile)
   }
 
