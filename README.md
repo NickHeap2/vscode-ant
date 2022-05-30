@@ -97,7 +97,11 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-Resolve the GitHub dependabot alerts.
+Fixed the issue with double quotes on spaced targets.
+
+## [0.3.3] - 2022-05-30
+### Fixed
+- Fix double quotes on targets with spaces.
 
 ## [0.3.2] - 2022-03-08
 ### Fixed
@@ -118,7 +122,3 @@ Resolve the GitHub dependabot alerts.
 
 ### Fixed
 - Updated dependencies based on Github security reports.
-
-## [0.2.1] - 2020-05-05
-### Fixed
-- Extension missing README etc

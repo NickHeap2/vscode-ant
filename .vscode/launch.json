@@ -5,6 +5,7 @@
 {
 	"version": "0.2.0",
     "configurations": [
+
         {
             "name": "Extension test folder",
             "type": "extensionHost",
@@ -27,6 +28,18 @@
                 "${workspaceFolder}/test_otherfolder"
             ]
         },
+        {
+            "name": "Extension test with space folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test with space"
+            ]
+        },
+
         {
             "name": "Extension test workspace",
             "type": "extensionHost",

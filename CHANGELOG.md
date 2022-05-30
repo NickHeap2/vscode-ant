@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to the "vscode-ant" extension will be documented in this file.
 
+## [0.3.3] - 2022-05-30
+### Fixed
+- Fix double quotes on targets with spaces.
+
 ## [0.3.2] - 2022-03-08
 ### Fixed
 - Updated dependencies based on Github security reports.

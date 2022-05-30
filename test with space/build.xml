@@ -5,4 +5,8 @@
     <echo message="Workspace folders with spaces in will work!"/>
   </target>
 
+  <target name="spaced target" depends="">
+    <echo message="Spaced target name should work!"/>
+  </target>
+
 </project>
