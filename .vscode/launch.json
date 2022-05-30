@@ -40,6 +40,28 @@
             ]
         },
         {
+            "name": "Extension test_with_vars folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test_with_vars"
+            ]
+        },
+        {
+            "name": "Extension test_with_vars_and_spaces folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test_with_vars_and_spaces"
+            ]
+        },
+        {
             "name": "Extension test with space folder",
             "type": "extensionHost",
             "request": "launch",
@@ -49,7 +71,7 @@
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "${workspaceFolder}/test with space"
             ]
-        },
+        },        
         {
             "name": "Extension test workspace",
             "type": "extensionHost",

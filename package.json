@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.3.3",
+    "version": "0.4.0-test",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -187,7 +187,7 @@
         }
     },
     "scripts": {
-        "test": "node ./node_modules/vscode/bin/test",
+        "test": "jest --verbose",
         "tests": "mocha tests",
         "lint": "eslint src",
         "package": "vsce package",

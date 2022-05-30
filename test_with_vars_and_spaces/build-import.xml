@@ -1,19 +1,19 @@
-<project name="importname" default="a-target">
+<project name="importname" default="a target">
   <property environment="env"/>
 
-  <target name="a-target" description="Desc1 with more spaces" depends="">
+  <target name="a target" description="Desc1 with more spaces" depends="">
     <echo message="This should work!"/>
   </target>
 
-  <target name="b-target" depends="">
+  <target name="b target" depends="">
     <echo message="This should work!"/>
   </target>
 
-  <target name="c-target" depends="b-target, a-target">
+  <target name="c target" depends="b target, a target">
     <echo message="This should work!"/>
   </target>
 
-  <target name="d-target" depends="">
+  <target name="d target" depends="">
     <echo message="This should work!"/>
   </target>
 
