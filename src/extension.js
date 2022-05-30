@@ -1,10 +1,8 @@
 const vscode = require('vscode')
-const AntWrapper = require('./AntWrapper')
 const AntTreeDataProvider = require('./AntTreeDataProvider')
 const AntTargetRunner = require('./AntTargetRunner')
 const AutoTargetRunner = require('./AutoTargetRunner')
 
-var antWrapper
 var antTargetRunner
 var autoTargetRunner
 var antTreeDataProvider
@@ -12,12 +10,11 @@ var antTreeDataProvider
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate (context) {
-  // antWrapper = new AntWrapper(context)
-  antTargetRunner = new AntTargetRunner(context)
-  autoTargetRunner = new AutoTargetRunner(context)
+  antTargetRunner = new AntTargetRunner(vscode, context)
+  autoTargetRunner = new AutoTargetRunner(vscode, context)
   // autoTargetRunner.startWatching()
 
-  antTreeDataProvider = new AntTreeDataProvider(context)
+  antTreeDataProvider = new AntTreeDataProvider(vscode, context)
   // antTreeDataProvider.targetRunner = antTargetRunner
 
   var antRunnerView = vscode.window.createTreeView('antRunnerView', {treeDataProvider: antTreeDataProvider})
@@ -57,7 +54,6 @@ function activate (context) {
 exports.activate = activate
 
 function refresh () {
-  // antWrapper.onDidChangeConfiguration()
   antTargetRunner.onDidChangeConfiguration()
   autoTargetRunner.onDidChangeConfiguration()
   antTreeDataProvider.refresh()

@@ -3,22 +3,22 @@ const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
 const AntWrapper = require('./AntWrapper')
-const vscode = require('vscode')
 
 module.exports = class BuildFileParser {
-  constructor (context, rootPath) {
+  constructor (vscode, context, rootPath) {
+    this.vscode = vscode
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
     console.debug(this.rootPath)
     this.useAntToParse = true
-    this.antWrapper = new AntWrapper(context)
+    this.antWrapper = new AntWrapper(vscode, context, rootPath)
     this.getConfigOptions()
   }
 
   getConfigOptions () {
-    let configOptions = vscode.workspace.getConfiguration('ant', null)
+    let configOptions = this.vscode.workspace.getConfiguration('ant', null)
 
-    this.useAntForParsing = configOptions.get('parseBuildFileWithAnt', 'ant')
+    this.useAntForParsing = configOptions.get('useAntForParsing', 'ant')
   }
 
   findBuildFile (searchDirectories, searchFileNames) {
@@ -114,17 +114,21 @@ module.exports = class BuildFileParser {
   }
 
   async parseBuildFile (buildFileName) {
-    if (this.useAntForParsing) {
-      await this.parseBuildFileWithAnt(buildFileName)
-    } else {
-      await this.parseBuildFileDirect(buildFileName)
+    try {
+      if (this.useAntForParsing) {
+        return await this.parseBuildFileWithAnt(buildFileName)
+      } else {
+        return await this.parseBuildFileDirect(buildFileName)
+      }
+    } catch (err) {
+      throw err
     }
   }
 
   async parseBuildFileWithAnt (buildFileName) {
     try {
       const data = await this.antWrapper.spawnAnt(buildFileName)
-      const buildFile = this.antWrapper.parseAntData(data)
+      return this.antWrapper.parseAntData(data)
     } catch(err) {
       console.error(err)
     }

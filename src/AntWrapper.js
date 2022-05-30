@@ -1,16 +1,16 @@
-const vscode = require('vscode')
 const path = require('path')
-const { ModuleFilenameHelpers } = require('webpack')
 const fileHelper = require('./fileHelper')
 
-var extensionContext
-
 module.exports = class AntWrapper {
-  constructor (context) {
-    extensionContext = context
+  constructor (vscode, context, rootPath) {
+    this.vscode = vscode
+    this.extensionContext = context
+    this.rootPath = rootPath
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
-    extensionContext.subscriptions.push(onDidChangeConfiguration)
+    this.extensionContext.subscriptions.push(onDidChangeConfiguration)
+
+    this.getConfigOptions()
   }
 
   onDidChangeConfiguration () {
@@ -18,11 +18,11 @@ module.exports = class AntWrapper {
   }
 
   async getConfigOptions () {
-    let configOptions = vscode.workspace.getConfiguration('ant', null)
+    let configOptions = this.vscode.workspace.getConfiguration('ant', null)
 
     this.antHome = configOptions.get('home', '')
     if (this.antHome === '' || typeof this.antHome === 'undefined') {
-      this.antHome = path.join(extensionContext.extensionPath, 'dist', 'apache-ant')
+      this.antHome = path.join(this.extensionContext.extensionPath, 'dist', 'apache-ant')
     }
     
     this.antExecutable = configOptions.get('executable', 'ant')
@@ -41,7 +41,8 @@ module.exports = class AntWrapper {
         $: {
           name: '',
           default: ''
-        }
+        },
+        target: []
       }
     }
 
@@ -57,7 +58,7 @@ module.exports = class AntWrapper {
     const lines = lineData.split('\n')
 
     for (const line of lines) {
-      console.log(line)
+      // console.log(line)
       if (line.match(/ant\.file\.(?!type)/)) {
         let lineParts = line.split('ant.file.')
         if (lineParts.length > 1) {
@@ -74,7 +75,12 @@ module.exports = class AntWrapper {
         if (lineParts.length > 1) {
           const targetName = lineParts[1]
           if (targetName !== '' && !targetName.startsWith(currentFile.name)) {
-            buildFileObj.project.$.targets.push({ name: targetName, sourceFile: currentFile.path })
+            buildFileObj.project.target.push({
+              $: {
+                name: targetName,
+                sourceFile: currentFile.path
+              }
+            })
           }
         }
       }
@@ -107,13 +113,13 @@ module.exports = class AntWrapper {
         if (line.match(/^ {3}depends on:/)) {
           const lineParts = line.split(' depends on: ')
           if (lineParts.length > 1) {
-            currentTarget.depends = lineParts[1]
+            currentTarget.$.depends = lineParts[1]
           }
         }
 
         // entry is space then target name then two spaces then description
-        for(const target of buildFileObj.project.$.targets) {
-          const regex = new RegExp(`^( ${target.name})`)
+        for(const target of buildFileObj.project.target) {
+          const regex = new RegExp(`^( ${target.$.name})`)
           const match = line.match(regex)
           // first we must match target name
           if (match && match.length > 0) {
@@ -131,7 +137,7 @@ module.exports = class AntWrapper {
               continue
             }
             currentTarget = target
-            currentTarget.description = line.substring(matchLength + 2).trimStart()
+            currentTarget.$.description = line.substring(matchLength + 2).trimStart()
           }
         }
       }
@@ -157,7 +163,12 @@ module.exports = class AntWrapper {
       throw new Error( `Couldn't resolve ant executable from ${this.antExecutable} and ${this.antHome}!`);
     }
 
-    const child = spawn(resolvedAntExecutable, ['-p', '-v', '-d', '-buildfile', buildFileName], { shell: true })
+    const child = spawn(resolvedAntExecutable,
+      ['-p', '-v', '-d', '-buildfile', buildFileName],
+      {
+        shell: true,
+        cwd: this.rootPath
+    })
 
     let data = ""
     for await (const chunk of child.stdout) {
