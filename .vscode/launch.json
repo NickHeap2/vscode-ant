@@ -80,7 +80,7 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test with space"
+                "${workspaceFolder}/tests/test with space"
             ]
         },        
         {
@@ -92,6 +92,17 @@
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "${workspaceFolder}/tests/workspace/workspace.code-workspace"
+            ]
+        },
+        {
+            "name": "Extension test bad_file",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/bad_file"
             ]
         },
         {

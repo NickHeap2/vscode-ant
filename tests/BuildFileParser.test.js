@@ -1,3 +1,4 @@
+/* globals jest, expect */
 const path = require('path')
 
 const context = {
@@ -18,7 +19,7 @@ const BuildFileParser = require("../src/BuildFileParser")
 
 const currentDir = path.resolve('./')
 
-//#region testData
+// #region testData
 const expectedDataFromDirect = {
   project: {
     $: {
@@ -382,7 +383,7 @@ const expectedDataFromJoellutzAnt = {
   }
 }
 
-//#endregion testData
+// #endregion testData
 
 describe('BuildFileParser', () => {
   beforeEach(() => {
@@ -435,6 +436,37 @@ describe('BuildFileParser', () => {
     const buildFileParser = new BuildFileParser(vscode, context, rootPath)
     const result = await buildFileParser.parseBuildFile('tests/test_joellutz/build.xml')
     expect(result).toStrictEqual(expectedDataFromJoellutzAnt)
+  })
+
+  test('should throw error message from ant', async () => {
+    vscode.workspace.getConfiguration.mockReturnValue({ get: jest.fn()
+      .mockReturnValueOnce( undefined )
+      .mockReturnValueOnce( undefined )
+      .mockReturnValueOnce( true )
+    })
+
+    const buildFileParser = new BuildFileParser(vscode, context, rootPath)
+
+    const buildFileFullPath = path.resolve('tests/bad_file/build.xml')
+    const expectedError = `${buildFileFullPath}:6: The element type \"targeta\" must be terminated by the matching end-tag \"</targeta>\".`
+
+    await expect(buildFileParser.parseBuildFile('tests/bad_file/build.xml'))
+      .rejects.toThrow(expectedError)
+  })
+
+  test('should throw error message from internal parser', async () => {
+    vscode.workspace.getConfiguration.mockReturnValue({ get: jest.fn()
+      .mockReturnValueOnce( undefined )
+      .mockReturnValueOnce( undefined )
+      .mockReturnValueOnce( false )
+    })
+
+    const buildFileParser = new BuildFileParser(vscode, context, rootPath)
+
+    const expectedError = "Error parsing build.xml!:Error: Unexpected close tag\nLine: 5\nColumn: 11\nChar: >"
+
+    await expect(buildFileParser.parseBuildFile('tests/bad_file/build.xml'))
+      .rejects.toThrow(expectedError)
   })
 
 })

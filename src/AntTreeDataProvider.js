@@ -4,15 +4,15 @@ const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
 
-var darkDefault
-var lightDefault
-var darkTarget
-var lightTarget
-var darkDependency
-var lightDependency
+let darkDefault
+let lightDefault
+let darkTarget
+let lightTarget
+let darkDependency
+let lightDependency
 
-var configOptions
-var selectedAntTarget
+let configOptions
+let selectedAntTarget
 
 module.exports = class AntTreeDataProvider {
   constructor (vscode, context) {
@@ -55,10 +55,10 @@ module.exports = class AntTreeDataProvider {
     this.onDidChangeTreeData = this._onDidChangeTreeData.event
 
     // trap config and workspaces changes to pass updates
-    var onDidChangeConfiguration = this.vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    const onDidChangeConfiguration = this.vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeConfiguration)
 
-    var onDidChangeWorkspaceFolders = this.vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
+    const onDidChangeWorkspaceFolders = this.vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
 
     this.getConfigOptions()
@@ -94,7 +94,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   watchFile (globPattern) {
-    var fileSystemWatcher = this.vscode.workspace.createFileSystemWatcher(globPattern)
+    const fileSystemWatcher = this.vscode.workspace.createFileSystemWatcher(globPattern)
     this.extensionContext.subscriptions.push(fileSystemWatcher)
 
     this.eventListeners.push({
@@ -270,8 +270,9 @@ module.exports = class AntTreeDataProvider {
 
   getRoots () {
     return new Promise(async (resolve, reject) => {
+      let buildFilename
       try {
-        var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
+        buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
         if (this.workspaceFolderNumber < (this.workspaceFolders.length - 1)) {
           this.workspaceFolderNumber++
@@ -284,25 +285,25 @@ module.exports = class AntTreeDataProvider {
         return resolve([])
       }
 
+      let buildFileObj
       try {
-        var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
+        buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
       } catch (error) {
-        messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
+        messageHelper.showErrorMessage(`Error reading ${buildFilename}! ${error}`)
         return reject(new Error('Error reading build.xml!: ' + error))
       }
 
       try {
-        var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
+        const projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
+        const [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
         messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
 
-        // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
           this.watchBuildFile(this.rootPath, buildSourceFile)
         }
 
-        var root = {
+        const root = {
           id: buildFilename,
           contextValue: 'antFile',
           filePath: path.dirname(buildFilename),

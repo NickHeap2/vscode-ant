@@ -170,20 +170,20 @@ module.exports = class AntWrapper {
         cwd: this.rootPath
     })
 
-    let data = ""
-    for await (const chunk of child.stdout) {
-        data += chunk
-    }
     let error = ""
     for await (const chunk of child.stderr) {
         error += chunk
+    }
+    let data = ""
+    for await (const chunk of child.stdout) {
+        data += chunk
     }
     const exitCode = await new Promise( (resolve, reject) => {
         child.on('close', resolve)
     })
 
     if( exitCode) {
-        throw new Error( `subprocess error exit ${exitCode}, ${error}`)
+        throw new Error(error)
     }
     return data
   }
