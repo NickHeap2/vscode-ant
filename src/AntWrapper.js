@@ -7,7 +7,7 @@ module.exports = class AntWrapper {
     this.extensionContext = context
     this.rootPath = rootPath
 
-    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    const onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeConfiguration)
 
     this.getConfigOptions()
@@ -171,14 +171,14 @@ module.exports = class AntWrapper {
     })
 
     let error = ""
-    for await (const chunk of child.stderr) {
+    for await (const chunk of child.stderr) { // eslint-disable-line
         error += chunk
     }
     let data = ""
-    for await (const chunk of child.stdout) {
+    for await (const chunk of child.stdout) { // eslint-disable-line
         data += chunk
     }
-    const exitCode = await new Promise( (resolve, reject) => {
+    const exitCode = await new Promise( (resolve) => {
         child.on('close', resolve)
     })
 

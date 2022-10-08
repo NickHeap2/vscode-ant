@@ -1,5 +1,17 @@
 # Change Log
-All notable changes to the "vscode-ant" extension will be documented in this file.
+Fixed the issue with not running on VSCode 1.72.0 due to a blank command.
+Added parsing of build file by ant executable by default. This can be reverted to old behaviour.
+Added reporting of issues with the build file into the notification.
+Updated all dependencies.
+
+## [0.4.0] - 2022-10-08
+### Added
+- Now uses ant to parse the build file by default.
+- Report build file issues to user via notification.
+
+### Fixed
+- Remove blank command which was failing with VSCode 1.72.0.
+- Fixed all dependency audits.
 
 ## [0.3.3] - 2022-05-30
 ### Fixed

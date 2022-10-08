@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.4.0-test2",
+    "version": "0.4.0",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -161,12 +161,12 @@
                 "ant.buildFilenames": {
                     "type": "string",
                     "default": "build.xml",
-                    "description": "Comma seperated list of file names to check for build file."
+                    "description": "Comma separated list of file names to check for build file."
                 },
                 "ant.buildFileDirectories": {
                     "type": "string",
                     "default": ".",
-                    "description": "Comma seperated list of directories to check for build files."
+                    "description": "Comma separated list of directories to check for build files."
                 },
                 "ant.buildAutoFile": {
                     "type": "string",
@@ -197,6 +197,8 @@
         "webpack-dev": "webpack --mode development --watch"
     },
     "devDependencies": {
+        "@babel/core": "^7.19.3",
+        "@babel/eslint-parser": "^7.19.1",
         "@types/jest": "^29.1.2",
         "@types/mocha": "^10.0.0",
         "@types/node": "^18.8.3",
