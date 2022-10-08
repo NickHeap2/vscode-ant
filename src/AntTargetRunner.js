@@ -1,18 +1,16 @@
-const vscode = require('vscode')
 const dotenv = require('dotenv')
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const fs = require('fs')
 const path = require('path')
 
-var extensionContext
-
 module.exports = class AntTargetRunner {
-  constructor (context) {
-    extensionContext = context
+  constructor (vscode, context) {
+    this.extensionContext = context
+    this.vscode = vscode
     this.autoTargetRunner = null
 
     var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
-    extensionContext.subscriptions.push(onDidChangeConfiguration)
+    this.extensionContext.subscriptions.push(onDidChangeConfiguration)
   }
 
   setWorkspaceFolder (workspaceFolder) {
@@ -26,7 +24,7 @@ module.exports = class AntTargetRunner {
   }
 
   async getConfigOptions () {
-    let configOptions = vscode.workspace.getConfiguration('ant', null)
+    let configOptions = this.vscode.workspace.getConfiguration('ant', null)
     this.envVarsFile = configOptions.get('envVarsFile', 'build.env')
     this.ansiconExe = configOptions.get('ansiconExe', '')
 
@@ -38,7 +36,7 @@ module.exports = class AntTargetRunner {
 
     this.antHome = configOptions.get('home', '')
     if (this.antHome === '' || typeof this.antHome === 'undefined') {
-      this.antHome = path.join(extensionContext.extensionPath, 'dist', 'apache-ant')
+      this.antHome = path.join(this.extensionContext.extensionPath, 'dist', 'apache-ant')
     }
 
     this.antExecutable = configOptions.get('executable', 'ant')
@@ -48,17 +46,17 @@ module.exports = class AntTargetRunner {
       } else {
         this.antExecutable = 'ant.sh'
       }
-      // if (!filehelper.pathExists(this.antExecutable) && filehelper.pathExists(this.antHome)) {
+      // if (!fileHelper.pathExists(this.antExecutable) && fileHelper.pathExists(this.antHome)) {
       //   const joinedPath = path.join(this.antHome, 'bin', this.antExecutable)
-      //   if (filehelper.pathExists(joinedPath)) {
+      //   if (fileHelper.pathExists(joinedPath)) {
       //     this.antExecutable = '"' + joinedPath + '"'
       //   }
       // }
     }
 
     // enable WinColorLogger?
-    if (process.platform === 'win32' && filehelper.pathExists(this.antHome)) {
-      this.useWinColorLogger = filehelper.pathExists(path.join(this.antHome, 'lib', 'WinColorLogger.jar'))
+    if (process.platform === 'win32' && fileHelper.pathExists(this.antHome)) {
+      this.useWinColorLogger = fileHelper.pathExists(path.join(this.antHome, 'lib', 'WinColorLogger.jar'))
     }
 
     this.buildFileDirectories = configOptions.get('buildFileDirectories', '.')
@@ -70,7 +68,7 @@ module.exports = class AntTargetRunner {
       this.envVarsFile = 'build.env'
     }
 
-    this.envVarsFile = await filehelper.findfirstFile(this.rootPath, this.buildFileDirectories.split(','), this.envVarsFile.split(','))
+    this.envVarsFile = await fileHelper.findFirstFile(this.rootPath, this.buildFileDirectories.split(','), this.envVarsFile.split(','))
 
     if (this.antTerminal) {
       this.antTerminal.dispose()
@@ -101,8 +99,8 @@ module.exports = class AntTargetRunner {
 
     if (!this.antTerminal) {
       var envVars = {}
-      if (this.envVarsFile && filehelper.pathExists(filehelper.getRootFile(this.rootPath, this.envVarsFile))) {
-        envVars = dotenv.parse(fs.readFileSync(filehelper.getRootFile(this.rootPath, this.envVarsFile)))
+      if (this.envVarsFile && fileHelper.pathExists(fileHelper.getRootFile(this.rootPath, this.envVarsFile))) {
+        envVars = dotenv.parse(fs.readFileSync(fileHelper.getRootFile(this.rootPath, this.envVarsFile)))
       }
 
       if (this.antHome) {
@@ -110,9 +108,9 @@ module.exports = class AntTargetRunner {
       }
 
       // add ant to path?
-      if (!filehelper.pathExists(this.antExecutable) && filehelper.pathExists(this.antHome)) {
+      if (!fileHelper.pathExists(this.antExecutable) && fileHelper.pathExists(this.antHome)) {
         const joinedPath = path.join(this.antHome, 'bin')
-        if (filehelper.pathExists(joinedPath)) {
+        if (fileHelper.pathExists(joinedPath)) {
           if (process.platform === 'win32') {
             envVars.Path = process.env.Path + ';' + joinedPath
           } else {
@@ -122,15 +120,15 @@ module.exports = class AntTargetRunner {
       }
 
       // use ansicon on win32?
-      if (process.platform === 'win32' && this.ansiconExe && filehelper.pathExists(this.ansiconExe)) {
+      if (process.platform === 'win32' && this.ansiconExe && fileHelper.pathExists(this.ansiconExe)) {
         if (envVars.ANT_ARGS === undefined) {
           envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
         }
-        let integratedShell = vscode.workspace.getConfiguration('terminal.integrated.shell', null).windows
+        let integratedShell = this.vscode.workspace.getConfiguration('terminal.integrated.shell', null).windows
         if (integratedShell) {
-          this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe, shellArgs: [ integratedShell ]})
+          this.antTerminal = this.vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe, shellArgs: [ integratedShell ]})
         } else {
-          this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe})
+          this.antTerminal = this.vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars, shellPath: this.ansiconExe})
         }
       } else {
         if (this.useWinColorLogger) {
@@ -139,7 +137,7 @@ module.exports = class AntTargetRunner {
           envVars.ANT_ARGS = ' -logger org.apache.tools.ant.listener.AnsiColorLogger'
         }
 
-        this.antTerminal = vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
+        this.antTerminal = this.vscode.window.createTerminal({name: 'Ant Target Runner', env: envVars}) // , shellPath: 'C:\\WINDOWS\\System32\\cmd.exe' })
       }
 
       this.antTerminal.sendText(`cd "${this.rootPath}"`)
@@ -160,9 +158,9 @@ module.exports = class AntTargetRunner {
   }
 
   revealDefinition (target) {
-    vscode.workspace.openTextDocument(filehelper.getRootFile(this.rootPath, target.sourceFile))
+    this.vscode.workspace.openTextDocument(fileHelper.getRootFile(this.rootPath, target.sourceFile))
       .then((document) => {
-        return vscode.window.showTextDocument(document)
+        return this.vscode.window.showTextDocument(document)
       })
       .then((textEditor) => {
         // find the line
@@ -171,7 +169,7 @@ module.exports = class AntTargetRunner {
         let offset = regexp.exec(text)
         if (offset) {
           let position = textEditor.document.positionAt(offset.index)
-          textEditor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter)
+          textEditor.revealRange(new this.vscode.Range(position, position), this.vscode.TextEditorRevealType.InCenter)
         }
       })
   }

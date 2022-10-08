@@ -1,16 +1,17 @@
 # Ant Target Runner for Visual Studio Code
 
-An ant extension that parses build.xml in the root directory (but you can conifgure it to look eleswhere) and allows you to easily run the targets or reveal their definitions.
+An ant extension that parses build.xml in the root directory (but you can configure it to look elsewhere) and allows you to easily run the targets or reveal their definitions.
 Ant build output can be colorized, environment variables can be set and targets can be automatically run on changes in the file system.
 
 ## Features
 
 - Bundled Ant 1.10.7 with a windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
-- Searches for build.xml in the root directory (but you can configure it to look eleswhere) on startup and loads the targets ready to run.
+- Searches for build.xml in the root directory (but you can configure it to look elsewhere) on startup and loads the targets ready to run.
 - Supports multi-folder workspaces by scanning each folder in turn looking for build files.
 - The targets and their dependencies are visualised in a treeview and can be run from the toolbar or the context menu option.
 - Dependencies of dependencies are shown recursively to give a full picture of what will be run and in which order.
 - Targets can be sorted as they appear in the file or in alphabetical order.
+- NOTE: this version now uses the ant executable to parse the build file by default so that it can resolve imports. To revert to previous behaviour set `ant.useAntForParsing` to false.
 
 ![It works like this](/resources/demo.gif "It works like this")
 
@@ -36,9 +37,9 @@ Ant build output can be colorized, environment variables can be set and targets 
 
 For this release the extension requires:
 - Ant version 1.10.7 is now bundled with the extension but you can also point the extension at an existing ant install (using `ant.executable` and `ant.home`).
-- By default your ant build xml file should be in the root directory and be called build.xml but you can conifgure it to look eleswhere.
-- By default any environment variables file should be in the root directory and be called build.env but you can conifgure it to look eleswhere.
-- By default any auto target file should be in the root directory and be called build.auto but you can conifgure it to look eleswhere.
+- By default your ant build xml file should be in the root directory and be called build.xml but you can configure it to look elsewhere.
+- By default any environment variables file should be in the root directory and be called build.env but you can configure it to look elsewhere.
+- By default any auto target file should be in the root directory and be called build.auto but you can configure it to look elsewhere.
 
 ## Extension Settings & Configuration files
 
@@ -54,6 +55,7 @@ This extension contributes the following settings:
 * `ant.buildAutoFile`: comma separated list of file names to load auto targets from. Default is build.auto.
 * `ant.initialiseCommandOnWin32`: command to call when new output console is initialised on win32 platform.
 * `ant.initialiseCommandOnLinux`: command to call when new output console is initialised on linux platform.
+* `ant.useAntForParsing`: Use ant command line to parse the build file. If set to false then an internal parser is used instead which is comparatively limited.
 
 The extension will use the built in version of Ant which includes a windows colour library if you don't configure the ant.executable or ant.home settings.
 
@@ -97,7 +99,19 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-Fixed the issue with double quotes on spaced targets.
+Fixed the issue with not running on VSCode 1.72.0 due to a blank command.
+Added parsing of build file by ant executable by default. This can be reverted to old behaviour.
+Added reporting of issues with the build file into the notification.
+Updated all dependencies.
+
+## [0.4.0] - 2022-10-08
+### Added
+- Now uses ant to parse the build file by default.
+- Report build file issues to user via notification.
+
+### Fixed
+- Remove blank command which was failing with VSCode 1.72.0.
+- Fixed all dependency audits.
 
 ## [0.3.3] - 2022-05-30
 ### Fixed

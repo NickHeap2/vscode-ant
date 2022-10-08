@@ -1,16 +1,15 @@
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const fs = require('fs')
-const vscode = require('vscode')
-const util = require('./filehelper')
+const util = require('./fileHelper')
 const minimatch = require('minimatch')
 const messageHelper = require('./messageHelper')
 
-var extensionContext
 var configOptions
 
 module.exports = class AutoTargetRunner {
-  constructor (context) {
-    extensionContext = context
+  constructor (vscode, context) {
+    this.vscode = vscode
+    this.extensionContext = context
 
     this.autoFile = ''
 
@@ -20,9 +19,8 @@ module.exports = class AutoTargetRunner {
     this.autoRunTasks = []
     this.autoTargets = []
 
-    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
-    extensionContext.subscriptions.push(onDidChangeConfiguration)
-
+    var onDidChangeConfiguration = this.vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    this.extensionContext.subscriptions.push(onDidChangeConfiguration)
   }
 
   async setWorkspaceFolder (workspaceFolder) {
@@ -42,7 +40,7 @@ module.exports = class AutoTargetRunner {
   }
 
   async getConfigOptions () {
-    configOptions = vscode.workspace.getConfiguration('ant', null)
+    configOptions = this.vscode.workspace.getConfiguration('ant', null)
 
     this.autoFilename = configOptions.get('buildAutoFile', 'build.auto')
     if (this.autoFilename === '' || typeof this.autoFilename === 'undefined') {
@@ -72,29 +70,29 @@ module.exports = class AutoTargetRunner {
       // console.log('Running entry for:' + targets)
       this.autoRunTasks[targets] = undefined
       // this.targetRunner.runAntTarget({name: targets, sourceFile: sourceFile})
-      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: targets, sourceFile: sourceFile})
+      this.vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: targets, sourceFile: sourceFile})
     }, delay, targets)
   }
 
   watchAutoTargetsFile () {
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(this.autoFile)
-    extensionContext.subscriptions.push(fileSystemWatcher)
+    var fileSystemWatcher = this.vscode.workspace.createFileSystemWatcher(this.autoFile)
+    this.extensionContext.subscriptions.push(fileSystemWatcher)
 
     fileSystemWatcher.onDidChange(() => {
       this.loadAutoTargets()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
     fileSystemWatcher.onDidDelete(() => {
       this.loadAutoTargets()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
     fileSystemWatcher.onDidCreate(() => {
       this.loadAutoTargets()
-    }, this, extensionContext.subscriptions)
+    }, this, this.extensionContext.subscriptions)
   }
 
   getBuildAutoFileName (rootPath, searchDirectories, searchFileNames) {
     return new Promise(async (resolve, reject) => {
       try {
-        var filename = await filehelper.findfirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
+        var filename = await fileHelper.findFirstFile(rootPath, searchDirectories.split(','), searchFileNames.split(','))
         resolve(filename)
       } catch (error) {
         return reject(new Error('No build file found!'))
@@ -113,7 +111,7 @@ module.exports = class AutoTargetRunner {
       }
     }
 
-    var autoPathName = filehelper.getRootFile(this.rootPath, this.autoFile)
+    var autoPathName = fileHelper.getRootFile(this.rootPath, this.autoFile)
 
     if (util.pathExists(autoPathName)) {
       fs.readFile(autoPathName, 'utf-8', (err, data) => {
@@ -133,19 +131,19 @@ module.exports = class AutoTargetRunner {
         if (this.autoTargets) {
           messageHelper.showInformationMessage('Parsed ' + this.autoFile + ' for autotargets.')
           for (const autoTarget of this.autoTargets) {
-            let relativePattern = new vscode.RelativePattern(this.rootPath, autoTarget.filePattern)
-            autoTarget.autoFileWatcher = vscode.workspace.createFileSystemWatcher(relativePattern)
-            extensionContext.subscriptions.push(autoTarget.autoFileWatcher)
+            let relativePattern = new this.vscode.RelativePattern(this.rootPath, autoTarget.filePattern)
+            autoTarget.autoFileWatcher = this.vscode.workspace.createFileSystemWatcher(relativePattern)
+            this.extensionContext.subscriptions.push(autoTarget.autoFileWatcher)
 
             autoTarget.autoFileWatcher.onDidChange((context) => {
               this.autoTargetChange(context)
-            }, this, extensionContext.subscriptions)
+            }, this, this.extensionContext.subscriptions)
             autoTarget.autoFileWatcher.onDidDelete((context) => {
               this.autoTargetChange(context)
-            }, this, extensionContext.subscriptions)
+            }, this, this.extensionContext.subscriptions)
             autoTarget.autoFileWatcher.onDidCreate((context) => {
               this.autoTargetChange(context)
-            }, this, extensionContext.subscriptions)
+            }, this, this.extensionContext.subscriptions)
           }
         }
       })

@@ -1,0 +1,16 @@
+<project name="Test target names" default="default">
+  <property environment="env"/>
+
+  <target name="all-(b-dos)" depends="">
+    <echo message="This should work!"/>
+  </target>
+
+  <target name="all (b dos)" depends="">
+    <echo message="This should work!"/>
+  </target>
+
+  <target name="normal target" depends="">
+    <echo message="This should work!"/>
+  </target>
+
+</project>

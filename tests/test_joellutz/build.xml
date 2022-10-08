@@ -1,0 +1,10 @@
+<project  name="importAnotherFile" default="" basedir="." >
+
+	<property name="subfolder" value="./subfolder" />
+	<import file="${subfolder}/anotherFile.xml" />
+
+	<target name="test" >
+		<echo message="Hello from main file!" />
+	</target>
+
+</project>

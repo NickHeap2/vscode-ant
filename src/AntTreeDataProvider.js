@@ -1,40 +1,40 @@
-const vscode = require('vscode')
 const _ = require('lodash')
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const path = require('path')
 const BuildFileParser = require('./BuildFileParser.js')
 const messageHelper = require('./messageHelper')
 
-var darkDefault
-var lightDefault
-var darkTarget
-var lightTarget
-var darkDependency
-var lightDependency
+let darkDefault
+let lightDefault
+let darkTarget
+let lightTarget
+let darkDependency
+let lightDependency
 
-var configOptions
-var selectedAntTarget
+let configOptions
+let selectedAntTarget
 
 module.exports = class AntTreeDataProvider {
-  constructor (context) {
+  constructor (vscode, context) {
+    this.vscode = vscode
     this.extensionContext = context
 
-    darkTarget = vscode.Uri.file(
+    darkTarget = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'target.svg')
     )
-    lightTarget = vscode.Uri.file(
+    lightTarget = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'target.svg')
     )
-    darkDefault = vscode.Uri.file(
+    darkDefault = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'default.svg')
     )
-    lightDefault = vscode.Uri.file(
+    lightDefault = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'default.svg')
     )
-    darkDependency = vscode.Uri.file(
+    darkDependency = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'dark', 'dependency.svg')
     )
-    lightDependency = vscode.Uri.file(
+    lightDependency = this.vscode.Uri.file(
       path.join(context.extensionPath, 'dist', 'resources', 'icons', 'light', 'dependency.svg')
     )
 
@@ -44,21 +44,21 @@ module.exports = class AntTreeDataProvider {
     this.buildFileDirectories = '.'
     this.eventListeners = []
 
-    this.workspaceFolders = vscode.workspace.workspaceFolders
+    this.workspaceFolders = this.vscode.workspace.workspaceFolders
     this.workspaceFolderNumber = 0
     if (this.workspaceFolders) {
       this.setWorkspaceFolder()
     }
 
     // event for notify of change of data
-    this._onDidChangeTreeData = new vscode.EventEmitter()
+    this._onDidChangeTreeData = new this.vscode.EventEmitter()
     this.onDidChangeTreeData = this._onDidChangeTreeData.event
 
     // trap config and workspaces changes to pass updates
-    var onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    const onDidChangeConfiguration = this.vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeConfiguration)
 
-    var onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
+    const onDidChangeWorkspaceFolders = this.vscode.workspace.onDidChangeWorkspaceFolders(this.onDidChangeWorkspaceFolders.bind(this))
     this.extensionContext.subscriptions.push(onDidChangeWorkspaceFolders)
 
     this.getConfigOptions()
@@ -67,10 +67,10 @@ module.exports = class AntTreeDataProvider {
   setWorkspaceFolder () {
     this.rootPath = this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath
     // this.watchBuildXml(workspaceFolders)
-    this.BuildFileParser = new BuildFileParser(this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
+    this.BuildFileParser = new BuildFileParser(this.vscode, this.extensionContext, this.workspaceFolders[this.workspaceFolderNumber].uri.fsPath)
 
-    vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
-    vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+    this.vscode.commands.executeCommand('vscode-ant.setRunnerWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
+    this.vscode.commands.executeCommand('vscode-ant.setAutoWorkspaceFolder', this.workspaceFolders[this.workspaceFolderNumber])
   }
 
   onDidChangeConfiguration () {
@@ -79,7 +79,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   onDidChangeWorkspaceFolders () {
-    this.workspaceFolders = vscode.workspace.workspaceFolders
+    this.workspaceFolders = this.vscode.workspace.workspaceFolders
     this.workspaceFolderNumber = 0
     if (this.workspaceFolders) {
       this.setWorkspaceFolder()
@@ -89,12 +89,12 @@ module.exports = class AntTreeDataProvider {
   }
 
   watchBuildFile (rootPath, buildFileName) {
-    const buildFile = filehelper.getRootFile(this.rootPath, buildFileName)
+    const buildFile = fileHelper.getRootFile(this.rootPath, buildFileName)
     this.watchFile(buildFile)
   }
 
   watchFile (globPattern) {
-    var fileSystemWatcher = vscode.workspace.createFileSystemWatcher(globPattern)
+    const fileSystemWatcher = this.vscode.workspace.createFileSystemWatcher(globPattern)
     this.extensionContext.subscriptions.push(fileSystemWatcher)
 
     this.eventListeners.push({
@@ -113,7 +113,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   getConfigOptions () {
-    configOptions = vscode.workspace.getConfiguration('ant', null)
+    configOptions = this.vscode.workspace.getConfiguration('ant', null)
     this.sortTargetsAlphabetically = configOptions.get('sortTargetsAlphabetically', 'true')
     this.buildFilenames = configOptions.get('buildFilenames', 'build.xml')
     if (this.buildFilenames === '' || typeof this.buildFilenames === 'undefined') {
@@ -148,8 +148,7 @@ module.exports = class AntTreeDataProvider {
         id: element.filePath,
         contextValue: element.contextValue,
         label: element.fileName,
-        command: '',
-        collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
+        collapsibleState: this.vscode.TreeItemCollapsibleState.Expanded,
         tooltip: element.filePath
       }
       if (element.project) {
@@ -170,9 +169,9 @@ module.exports = class AntTreeDataProvider {
       }
       // can be expanded for depends?
       if (element.depends) {
-        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+        treeItem.collapsibleState = this.vscode.TreeItemCollapsibleState.Collapsed
       } else {
-        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None
+        treeItem.collapsibleState = this.vscode.TreeItemCollapsibleState.None
       }
       if (element.name === this.project.default) {
         treeItem.iconPath = {
@@ -204,9 +203,9 @@ module.exports = class AntTreeDataProvider {
       }
       // can be expanded for depends?
       if (element.depends) {
-        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed
+        treeItem.collapsibleState = this.vscode.TreeItemCollapsibleState.Collapsed
       } else {
-        treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None
+        treeItem.collapsibleState = this.vscode.TreeItemCollapsibleState.None
       }
       return treeItem
     } else {
@@ -271,8 +270,9 @@ module.exports = class AntTreeDataProvider {
 
   getRoots () {
     return new Promise(async (resolve, reject) => {
+      let buildFilename
       try {
-        var buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
+        buildFilename = await this.BuildFileParser.findBuildFile(this.buildFileDirectories.split(','), this.buildFilenames.split(','))
       } catch (error) {
         if (this.workspaceFolderNumber < (this.workspaceFolders.length - 1)) {
           this.workspaceFolderNumber++
@@ -285,25 +285,25 @@ module.exports = class AntTreeDataProvider {
         return resolve([])
       }
 
+      let buildFileObj
       try {
-        var buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
+        buildFileObj = await this.BuildFileParser.parseBuildFile(buildFilename)
       } catch (error) {
-        messageHelper.showErrorMessage('Error reading ' + buildFilename + '!')
+        messageHelper.showErrorMessage(`Error reading ${buildFilename}! ${error}`)
         return reject(new Error('Error reading build.xml!: ' + error))
       }
 
       try {
-        var projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
-        var [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
+        const projectDetails = await this.BuildFileParser.getProjectDetails(buildFileObj)
+        const [buildTargets, buildSourceFiles] = await this.BuildFileParser.getTargets(buildFilename, buildFileObj, [], [])
 
         messageHelper.showInformationMessage('Targets loaded from ' + buildFilename + '!')
 
-        // const buildSourceFiles = _.uniq(_.map(buildTargets, 'sourceFile'))
         for (const buildSourceFile of buildSourceFiles) {
           this.watchBuildFile(this.rootPath, buildSourceFile)
         }
 
-        var root = {
+        const root = {
           id: buildFilename,
           contextValue: 'antFile',
           filePath: path.dirname(buildFilename),
@@ -396,7 +396,7 @@ module.exports = class AntTreeDataProvider {
       if (target.indexOf(' ') >= 0) {
         target = '"' + target + '"'
       }
-      vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
+      this.vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: target, sourceFile: selectedAntTarget.sourceFile})
     }
   }
 

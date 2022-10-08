@@ -1,19 +1,30 @@
-const filehelper = require('./filehelper')
+const fileHelper = require('./fileHelper')
 const fs = require('fs')
 const path = require('path')
 const xml2js = require('xml2js')
+const AntWrapper = require('./AntWrapper')
 
-module.exports = class AntTreeDataProvider {
-  constructor (rootPath) {
+module.exports = class BuildFileParser {
+  constructor (vscode, context, rootPath) {
+    this.vscode = vscode
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
-    console.debug(this.rootPath)
+    // console.debug(this.rootPath)
+    this.useAntToParse = true
+    this.antWrapper = new AntWrapper(vscode, context, rootPath)
+    this.getConfigOptions()
+  }
+
+  getConfigOptions () {
+    let configOptions = this.vscode.workspace.getConfiguration('ant', null)
+
+    this.useAntForParsing = configOptions.get('useAntForParsing', 'ant')
   }
 
   findBuildFile (searchDirectories, searchFileNames) {
     return new Promise(async (resolve, reject) => {
       try {
-        var filename = await filehelper.findfirstFile(this.rootPath, searchDirectories, searchFileNames)
+        const filename = await fileHelper.findFirstFile(this.rootPath, searchDirectories, searchFileNames)
         resolve(filename)
       } catch (error) {
         return reject(new Error('No build file found!'))
@@ -22,7 +33,7 @@ module.exports = class AntTreeDataProvider {
   }
 
   getProjectDetails (buildFileObj) {
-    var project = {
+    const project = {
       name: '',
       default: ''
     }
@@ -43,8 +54,9 @@ module.exports = class AntTreeDataProvider {
 
   getImportTargets (antImportFile, existingTargets, existingSourceFiles) {
     return new Promise(async (resolve, reject) => {
+      let importFileContents
       try {
-        var importFileContents = await this.parseBuildFile(antImportFile)
+        importFileContents = await this.parseBuildFile(antImportFile)
       } catch (error) {
         return reject(new Error(`Error reading ${antImportFile}!: ` + error))
       }
@@ -62,8 +74,8 @@ module.exports = class AntTreeDataProvider {
     return new Promise(async (resolve, reject) => {
       // get imports
       if (fileContents.project.import) {
-        var antImports = fileContents.project.import.map((theImport) => {
-          let antImport = {
+        const antImports = fileContents.project.import.map((theImport) => {
+          const antImport = {
             file: theImport.$.file
           }
           return antImport
@@ -78,15 +90,21 @@ module.exports = class AntTreeDataProvider {
       }
 
       // get targets from the project
-      var targets = []
+      let targets = []
       if (fileContents.project.target) {
         targets = fileContents.project.target.map((target) => {
-          var antTarget = {
+          const antTarget = {
             id: target.$.name,
             contextValue: 'antTarget',
-            sourceFile: fileName,
             depends: target.$.depends,
             name: target.$.name
+          }
+
+          // set source file name
+          if (target.$.sourceFile) {
+            antTarget.sourceFile = path.relative(this.rootPath, target.$.sourceFile)
+          } else {
+            antTarget.sourceFile = fileName
           }
 
           if (target.$.description) {
@@ -102,11 +120,33 @@ module.exports = class AntTreeDataProvider {
     })
   }
 
-  parseBuildFile (buildFileName) {
-    console.debug(`buildFileName= ${buildFileName}`)
+  async parseBuildFile (buildFileName) {
+    try {
+      if (this.useAntForParsing) {
+        return await this.parseBuildFileWithAnt(buildFileName)
+      } else {
+        return await this.parseBuildFileDirect(buildFileName)
+      }
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async parseBuildFileWithAnt (buildFileName) {
+    try {
+      const data = await this.antWrapper.spawnAnt(buildFileName)
+      return this.antWrapper.parseAntData(data)
+    } catch(err) {
+      console.error(err)
+      throw err
+    }
+  }
+
+  parseBuildFileDirect (buildFileName) {
+    // console.debug(`buildFileName= ${buildFileName}`)
     return new Promise((resolve, reject) => {
-      var buildXml = filehelper.getRootFile(this.rootPath, buildFileName)
-      if (filehelper.pathExists(buildXml)) {
+      const buildXml = fileHelper.getRootFile(this.rootPath, buildFileName)
+      if (fileHelper.pathExists(buildXml)) {
         fs.readFile(buildXml, 'utf-8', (err, data) => {
           if (err) {
             return reject(new Error('Error reading build.xml!: ' + err))
@@ -117,19 +157,6 @@ module.exports = class AntTreeDataProvider {
               return reject(new Error('Error parsing build.xml!:' + err))
             } else {
               return resolve(result)
-              // project = this.setParentValues(result.project)
-
-              // var root = {
-              //   id: 'build.xml',
-              //   contextValue: 'antFile',
-              //   filePath: buildXml,
-              //   fileName: 'build.xml'
-              // }
-              // if (project.$.name) {
-              //   root.project = project.$.name
-              // }
-
-              // resolve([root])
             }
           })
         })

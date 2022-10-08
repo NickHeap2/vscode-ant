@@ -10,11 +10,11 @@ var antTreeDataProvider
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate (context) {
-  antTargetRunner = new AntTargetRunner(context)
-  autoTargetRunner = new AutoTargetRunner(context)
+  antTargetRunner = new AntTargetRunner(vscode, context)
+  autoTargetRunner = new AutoTargetRunner(vscode, context)
   // autoTargetRunner.startWatching()
 
-  antTreeDataProvider = new AntTreeDataProvider(context)
+  antTreeDataProvider = new AntTreeDataProvider(vscode, context)
   // antTreeDataProvider.targetRunner = antTargetRunner
 
   var antRunnerView = vscode.window.createTreeView('antRunnerView', {treeDataProvider: antTreeDataProvider})

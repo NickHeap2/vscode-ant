@@ -14,7 +14,7 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test"
+                "${workspaceFolder}/tests/test"
             ]
         },
         {
@@ -25,7 +25,51 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test_otherfolder"
+                "${workspaceFolder}/tests/test_otherfolder"
+            ]
+        },
+        {
+            "name": "Extension test_target_names folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_target_names"
+            ]
+        },
+        {
+            "name": "Extension test_with_vars folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_with_vars"
+            ]
+        },
+        {
+            "name": "Extension test_joellutz folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_joellutz"
+            ]
+        },
+        {
+            "name": "Extension test_with_vars_and_spaces folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_with_vars_and_spaces"
             ]
         },
         {
@@ -36,10 +80,9 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test with space"
+                "${workspaceFolder}/tests/test with space"
             ]
-        },
-
+        },        
         {
             "name": "Extension test workspace",
             "type": "extensionHost",
@@ -48,7 +91,18 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/workspace/workspace.code-workspace"
+                "${workspaceFolder}/tests/workspace/workspace.code-workspace"
+            ]
+        },
+        {
+            "name": "Extension test bad_file",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/bad_file"
             ]
         },
         {
@@ -58,7 +112,7 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionTestsPath=${workspaceFolder}/test"
+                "--extensionTestsPath=${workspaceFolder}/tests/test"
             ]
         },
         {

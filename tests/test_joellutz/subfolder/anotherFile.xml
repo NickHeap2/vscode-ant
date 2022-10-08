@@ -1,0 +1,7 @@
+<project name="" default="" basedir=".">
+
+	<target name="test2" >
+		<echo message="Hello from another file!" />
+	</target>
+
+</project>
