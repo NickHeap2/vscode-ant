@@ -5,6 +5,7 @@
 {
 	"version": "0.2.0",
     "configurations": [
+
         {
             "name": "Extension test folder",
             "type": "extensionHost",
@@ -36,30 +37,6 @@
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "${workspaceFolder}/test_target_names"
-            ]
-        },
-        {
-            "name": "Extension test_with_vars folder",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--disable-extensions",
-                "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test_with_vars"
-            ]
-        },
-        {
-            "name": "Extension test_with_vars_and_spaces folder",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--disable-extensions",
-                "--extensionDevelopmentPath=${workspaceFolder}",
-                "${workspaceFolder}/test_with_vars_and_spaces"
-            ]
-        },
         {
             "name": "Extension test workspace",
             "type": "extensionHost",
@@ -79,6 +56,17 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Extension test with space folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test with space"
             ]
         },
         {
