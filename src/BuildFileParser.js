@@ -9,7 +9,7 @@ module.exports = class BuildFileParser {
     this.vscode = vscode
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
-    console.debug(this.rootPath)
+    // console.debug(this.rootPath)
     this.useAntToParse = true
     this.antWrapper = new AntWrapper(vscode, context, rootPath)
     this.getConfigOptions()
@@ -95,9 +95,15 @@ module.exports = class BuildFileParser {
           var antTarget = {
             id: target.$.name,
             contextValue: 'antTarget',
-            sourceFile: fileName,
             depends: target.$.depends,
             name: target.$.name
+          }
+
+          // set source file name
+          if (target.$.sourceFile) {
+            antTarget.sourceFile = path.relative(this.rootPath, target.$.sourceFile)
+          } else {
+            antTarget.sourceFile = fileName
           }
 
           if (target.$.description) {
@@ -135,7 +141,7 @@ module.exports = class BuildFileParser {
   }
 
   parseBuildFileDirect (buildFileName) {
-    console.debug(`buildFileName= ${buildFileName}`)
+    // console.debug(`buildFileName= ${buildFileName}`)
     return new Promise((resolve, reject) => {
       var buildXml = fileHelper.getRootFile(this.rootPath, buildFileName)
       if (fileHelper.pathExists(buildXml)) {

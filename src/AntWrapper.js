@@ -74,7 +74,7 @@ module.exports = class AntWrapper {
         const lineParts = line.split('+Target: ')
         if (lineParts.length > 1) {
           const targetName = lineParts[1]
-          if (targetName !== '' && !targetName.startsWith(currentFile.name)) {
+          if (targetName !== '' && (currentFile.name === '' || !targetName.startsWith(currentFile.name + '.'))) {
             buildFileObj.project.target.push({
               $: {
                 name: targetName,

@@ -148,7 +148,6 @@ module.exports = class AntTreeDataProvider {
         id: element.filePath,
         contextValue: element.contextValue,
         label: element.fileName,
-        command: '',
         collapsibleState: this.vscode.TreeItemCollapsibleState.Expanded,
         tooltip: element.filePath
       }
