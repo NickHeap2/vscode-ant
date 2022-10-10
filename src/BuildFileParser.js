@@ -7,11 +7,20 @@ const AntWrapper = require('./AntWrapper')
 module.exports = class BuildFileParser {
   constructor (vscode, context, rootPath) {
     this.vscode = vscode
+    this.extensionContext = context
     this.rootPath = rootPath
     this._parser = new xml2js.Parser()
     // console.debug(this.rootPath)
     this.useAntToParse = true
     this.antWrapper = new AntWrapper(vscode, context, rootPath)
+
+    const onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this))
+    this.extensionContext.subscriptions.push(onDidChangeConfiguration)
+
+    this.getConfigOptions()
+  }
+
+  onDidChangeConfiguration () {
     this.getConfigOptions()
   }
 
