@@ -191,6 +191,7 @@
         "tests": "mocha tests",
         "lint": "eslint src",
         "package": "vsce package",
+        "ci:publish": "vsce publish -p ${VSCE_TOKEN}",
         "publish": "vsce publish",
         "vscode:prepublish": "webpack --mode production",
         "webpack": "webpack --mode development",
