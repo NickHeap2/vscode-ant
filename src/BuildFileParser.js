@@ -146,7 +146,6 @@ module.exports = class BuildFileParser {
       const data = await this.antWrapper.spawnAnt(buildFileName)
       return this.antWrapper.parseAntData(data)
     } catch(err) {
-      console.error(err)
       throw err
     }
   }

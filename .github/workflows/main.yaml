@@ -27,8 +27,8 @@ jobs:
       - name: Check +x on ant
         run: chmod +x ./dist/apache-ant/bin/ant
 
-      - name: Unit Test
-        run: npm run test
+      #- name: Unit Test
+      #  run: npm run test
 
       - name: Publish
         run: npm run ci:publish
