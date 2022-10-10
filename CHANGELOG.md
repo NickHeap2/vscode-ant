@@ -1,8 +1,11 @@
 # Change Log
-Fixed the issue with not running on VSCode 1.72.0 due to a blank command.
-Added parsing of build file by ant executable by default. This can be reverted to old behaviour.
-Added reporting of issues with the build file into the notification.
-Updated all dependencies.
+Release through linux using GitHub actions so that ant stays executable.
+Detect changes of the use ant for parsing setting so that a restart isn't needed.
+
+## [0.4.1] - 2022-10-10
+### Fixed
+- Release through linux so that ant stays executable.
+- Detect changes of use ant for parsing so that a restart isn't needed.
 
 ## [0.4.0] - 2022-10-08
 ### Added

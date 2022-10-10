@@ -1,3 +1,5 @@
+const path = require('path')
+
 const context = {
   subscriptions: [],
   extensionPath: '.'
@@ -8,6 +10,13 @@ const vscode = {
     onDidChangeConfiguration: jest.fn(),
     getConfiguration: jest.fn()
   }
+}
+
+let antExecutable
+if (process.platform === "win32") {
+  antExecutable = "ant.bat"
+} else {
+  antExecutable = "ant"
 }
 
 //#region testData
@@ -129,8 +138,8 @@ describe('AntWrapper', () => {
     vscode.workspace.getConfiguration.mockReturnValue({ get: jest.fn() })
 
     const antWrapper = new AntWrapper(vscode, context)
-    expect(antWrapper.antExecutable).toBe('ant.bat')
-    expect(antWrapper.antHome).toBe('dist\\apache-ant')
+    expect(antWrapper.antExecutable).toBe(antExecutable)
+    expect(antWrapper.antHome).toBe(`dist${path.sep}apache-ant`)
     const antData = await antWrapper.spawnAnt('tests/test/build.xml')
     expect(antData).toContain('Apache Ant')
     expect(antData).toContain('parsing buildfile')
@@ -151,8 +160,8 @@ describe('AntWrapper', () => {
     vscode.workspace.getConfiguration.mockReturnValue({ get: jest.fn() })
 
     const antWrapper = new AntWrapper(vscode, context)
-    expect(antWrapper.antExecutable).toBe('ant.bat')
-    expect(antWrapper.antHome).toBe('dist\\apache-ant')
+    expect(antWrapper.antExecutable).toBe(antExecutable)
+    expect(antWrapper.antHome).toBe(`dist${path.sep}apache-ant`)
     const antData = await antWrapper.spawnAnt('tests/test_with_vars/build.xml')
     expect(antData).toContain('Apache Ant')
     expect(antData).toContain('parsing buildfile')
@@ -163,8 +172,8 @@ describe('AntWrapper', () => {
     vscode.workspace.getConfiguration.mockReturnValue({ get: jest.fn() })
 
     const antWrapper = new AntWrapper(vscode, context)
-    expect(antWrapper.antExecutable).toBe('ant.bat')
-    expect(antWrapper.antHome).toBe('dist\\apache-ant')
+    expect(antWrapper.antExecutable).toBe(antExecutable)
+    expect(antWrapper.antHome).toBe(`dist${path.sep}apache-ant`)
     const antData = await antWrapper.spawnAnt('tests/test_with_vars/build.xml')
     expect(antData).toContain('Apache Ant')
     expect(antData).toContain('parsing buildfile')
