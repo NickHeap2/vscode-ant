@@ -219,95 +219,95 @@ const expectedDataFromAnt = {
       {
         $: {
           name: "default",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "clean, compile, test, dist"
         }
       },
       {
         $: {
           name: "fold space",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           description: "Fold space"
         }
       },
       {
         $: {
           name: "dlc",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           description: "Show dlc!"
         }
       },
       {
         $: {
           name: "clean",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           description: "Clean all the things!"
         }
       },
       {
         $: {
           name: "start_databases",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`)
         }
       },
       {
         $: {
           name: "compile",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "start_databases"
         }
       },
       {
         $: {
           name: "compile_foldertest",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "start_databases"
         }
       },
       {
         $: {
           name: "test",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "compile"
         }
       },
       {
         $: {
           name: "dist",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "compile, test"
         }
       },
       {
         $: {
           name: "output_test",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`)
         }
       },
       {
         $: {
           name: "more targets with dependency",
-          sourceFile: `${currentDir}\\tests\\test\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/build.xml`),
           depends: "more targets target"
         }
       },
       {
         $: {
           name: "macrodefTarget",
-          sourceFile: `${currentDir}\\tests\\test\\macrodefs.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test/macrodefs.xml`)
         }
       },
       {
         $: {
           name: "more targets target",
-          sourceFile: `${currentDir}\\tests\\test\\targets.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/targets.xml`),
           description: "More Targets"
         }
       },
       {
         $: {
           name: "new one",
-          sourceFile: `${currentDir}\\tests\\test\\nestedFolder\\anotherlevel.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test/nestedFolder/anotherlevel.xml`),
           description: "Looooooooooooooooooooooooooooooooooooong5 desc"
         }
       }
@@ -325,7 +325,7 @@ const expectedDataFromAntWithVars = {
       {
         $: {
           name: "d-targetmore",
-          sourceFile: `${currentDir}\\tests\\test_with_vars\\build.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test_with_vars/build.xml`),
           description: "Check substring",
           depends: "d-target"
         }
@@ -333,26 +333,26 @@ const expectedDataFromAntWithVars = {
       {
         $: {
           name: "d-target",
-          sourceFile: `${currentDir}\\tests\\test_with_vars\\build.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test_with_vars/build.xml`)
         }
       },
       {
         $: {
           name: "a-target",
-          sourceFile: `${currentDir}\\tests\\test_with_vars\\build-import.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test_with_vars/build-import.xml`),
           description: "Desc1 with more spaces"
         }
       },
       {
         $: {
           name: "b-target",
-          sourceFile: `${currentDir}\\tests\\test_with_vars\\build-import.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test_with_vars/build-import.xml`)
         }
       },
       {
         $: {
           name: "c-target",
-          sourceFile: `${currentDir}\\tests\\test_with_vars\\build-import.xml`,
+          sourceFile: path.resolve(`${currentDir}/tests/test_with_vars/build-import.xml`),
           depends: "b-target, a-target"
         }
       }
@@ -370,13 +370,13 @@ const expectedDataFromJoellutzAnt = {
       {
         $: {
           name: "test",
-          sourceFile: `${currentDir}\\tests\\test_joellutz\\build.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test_joellutz/build.xml`)
         }
       },
       {
         $: {
           name: "test2",
-          sourceFile: `${currentDir}\\tests\\test_joellutz\\subfolder\\anotherFile.xml`
+          sourceFile: path.resolve(`${currentDir}/tests/test_joellutz/subfolder/anotherFile.xml`)
         }
       }
     ]
