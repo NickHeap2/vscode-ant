@@ -22,7 +22,7 @@ module.exports = class AntWrapper {
 
     this.antHome = configOptions.get('home', '')
     if (this.antHome === '' || typeof this.antHome === 'undefined') {
-      this.antHome = path.join(this.extensionContext.extensionPath, 'dist', 'apache-ant')
+      this.antHome = path.join(this.extensionContext.extensionPath, '.', 'dist', 'apache-ant')
     }
     
     this.antExecutable = configOptions.get('executable', 'ant')

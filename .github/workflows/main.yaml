@@ -21,11 +21,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Unit Test
-        run: npm run test
-
       - name: Check +x on ant
         run: chmod +x ./dist/apache-ant/bin/ant
+
+      - name: Unit Test
+        run: npm run test
 
       - name: Publish
         run: npm run ci:publish
