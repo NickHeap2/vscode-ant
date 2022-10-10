@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Check +x on ant
+        run: chmod +x ./apache-ant/bin/ant
+
       - name: Setup Node
         uses: actions/setup-node@v3
 
@@ -20,9 +23,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
-
-      - name: Check +x on ant
-        run: chmod +x ./dist/apache-ant/bin/ant
 
       - name: Unit Test
         run: npm run test
