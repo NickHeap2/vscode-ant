@@ -30,7 +30,7 @@ module.exports = class AntWrapper {
       if (process.platform === 'win32') {
         this.antExecutable = 'ant.bat'
       } else {
-        this.antExecutable = 'ant.sh'
+        this.antExecutable = 'ant'
       }
     }
   }

@@ -1,6 +1,5 @@
 const fileHelper = require('./fileHelper')
 const fs = require('fs')
-const util = require('./fileHelper')
 const minimatch = require('minimatch')
 const messageHelper = require('./messageHelper')
 
@@ -113,7 +112,7 @@ module.exports = class AutoTargetRunner {
 
     var autoPathName = fileHelper.getRootFile(this.rootPath, this.autoFile)
 
-    if (util.pathExists(autoPathName)) {
+    if (fileHelper.pathExists(autoPathName)) {
       fs.readFile(autoPathName, 'utf-8', (err, data) => {
         if (err) {
           return

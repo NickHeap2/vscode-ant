@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const fileHelper = require('./fileHelper')
 const path = require('path')
-const BuildFileParser = require('./BuildFileParser.js')
+const BuildFileParser = require('./BuildFileParser')
 const messageHelper = require('./messageHelper')
 
 let darkDefault
