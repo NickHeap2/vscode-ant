@@ -62,6 +62,17 @@
             ]
         },
         {
+            "name": "Extension test_joellutz2 folder",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_joellutz2"
+            ]
+        },
+        {
             "name": "Extension test_with_vars_and_spaces folder",
             "type": "extensionHost",
             "request": "launch",
@@ -103,6 +114,17 @@
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "${workspaceFolder}/tests/bad_file"
+            ]
+        },
+        {
+            "name": "Extension test xpants",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/tests/test_xpants"
             ]
         },
         {

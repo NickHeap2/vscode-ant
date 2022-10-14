@@ -82,7 +82,11 @@ module.exports = class AntTargetRunner {
     }
 
     var target = context.name
-    if (target.length > 0 && target[0] !== '"' && target.indexOf(' ') >= 0) {
+    if (target.length > 0
+        && target[0] !== '"'
+        && (target.indexOf(' ') >= 0
+            || target.indexOf('(') >= 0
+            || target.indexOf(')') >= 0)) {
       target = '"' + target + '"'
     }
 

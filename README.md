@@ -100,7 +100,11 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-Parser was failing if targets had regex characters in them. They are now escaped before checking for a match.
+Run target was failing if a target name had brackets in but no spaces.
+
+## [0.4.3] - 2022-10-14
+### Fixed
+- Fixed issue targets with brackets in not being surrounded by quotes.
 
 ## [0.4.2] - 2022-10-14
 ### Fixed
