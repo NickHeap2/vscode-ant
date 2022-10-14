@@ -7,6 +7,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 
 - Bundled Ant 1.10.7 with a windows colour library by Dennis Lang (http://landenlabs.com/android/ant-color-logger/index.html).
 - Searches for build.xml in the root directory (but you can configure it to look elsewhere) on startup and loads the targets ready to run.
+- Build file is parsed using Ant executable for accurate parsing results (there is a fallback basic parser if this gives you issues).
 - Supports multi-folder workspaces by scanning each folder in turn looking for build files.
 - The targets and their dependencies are visualised in a treeview and can be run from the toolbar or the context menu option.
 - Dependencies of dependencies are shown recursively to give a full picture of what will be run and in which order.
@@ -99,8 +100,11 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 
 ## Release Notes
 
-Release through linux using GitHub actions so that ant stays executable.
-Detect changes of the use ant for parsing setting so that a restart isn't needed.
+Parser was failing if targets had regex characters in them. They are now escaped before checking for a match.
+
+## [0.4.2] - 2022-10-14
+### Fixed
+- Fixed issue with parsing targets with regex characters in them.
 
 ## [0.4.1] - 2022-10-10
 ### Fixed

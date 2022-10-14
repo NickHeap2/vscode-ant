@@ -1,0 +1,11 @@
+<project  name="Test" default="" basedir="." >
+
+	<target name="Init" >
+		<echo message="Init" />
+	</target>
+
+	<target name="A (b)"  depends="Init" >
+		<echo message="Test" />
+	</target>
+
+</project>

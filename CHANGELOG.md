@@ -1,6 +1,9 @@
 # Change Log
-Release through linux using GitHub actions so that ant stays executable.
-Detect changes of the use ant for parsing setting so that a restart isn't needed.
+Parser was failing if targets had regex characters in them. They are now escaped before checking for a match.
+
+## [0.4.2] - 2022-10-14
+### Fixed
+- Fixed issue with parsing targets with regex characters in them.
 
 ## [0.4.1] - 2022-10-10
 ### Fixed

@@ -1,5 +1,6 @@
 const path = require('path')
 const fileHelper = require('./fileHelper')
+const _ = require('lodash')
 
 module.exports = class AntWrapper {
   constructor (vscode, context, rootPath) {
@@ -119,7 +120,8 @@ module.exports = class AntWrapper {
 
         // entry is space then target name then two spaces then description
         for(const target of buildFileObj.project.target) {
-          const regex = new RegExp(`^( ${target.$.name})`)
+          const escapedName = _.escapeRegExp(target.$.name)
+          const regex = new RegExp(`^( ${escapedName})`)
           const match = line.match(regex)
           // first we must match target name
           if (match && match.length > 0) {

@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
