@@ -203,7 +203,7 @@
         "@types/jest": "^29.5.8",
         "@types/mocha": "^10.0.4",
         "@types/node": "^18.18.9",
-        "@types/vscode": "^1.84.1",
+        "@types/vscode": "^1.18.1",
         "@vscode/test-electron": "^2.3.6",
         "chai": "^4.3.10",
         "copy-webpack-plugin": "^11.0.0",
