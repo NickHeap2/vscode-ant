@@ -7,7 +7,7 @@
   <target name="default" depends="clean,compile,test,dist"/>
 
   <target name="fold space" description="Fold space">
-    <echo message="Folding space..."/>
+    <echo message="Folding space (triggered by ${autoTargetTriggerFilename})..."/>
   </target>
 
   <target name="dlc" description="Show dlc!">

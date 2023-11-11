@@ -360,7 +360,7 @@ module.exports = class AntTreeDataProvider {
 
   getDependsInTarget (element) {
     return new Promise((resolve) => {
-      var depends = element.depends.split(',').map((depends) => {
+      var depends = element.depends.split(', ').map((depends) => {
         var dependsTarget = {
           id: depends,
           contextValue: 'antDepends',

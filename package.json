@@ -12,7 +12,7 @@
     },
     "displayName": "Ant Target Runner",
     "description": "Run Ant targets, manually & automatically, with colorized Ant output.",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "publisher": "nickheap",
     "engines": {
         "vscode": "^1.18.1"
@@ -198,27 +198,27 @@
         "webpack-dev": "webpack --mode development --watch"
     },
     "devDependencies": {
-        "@babel/core": "^7.19.3",
-        "@babel/eslint-parser": "^7.19.1",
-        "@types/jest": "^29.1.2",
-        "@types/mocha": "^10.0.0",
-        "@types/node": "^18.8.3",
-        "@types/vscode": "^1.18.1",
-        "@vscode/test-electron": "^2.1.5",
-        "chai": "^4.3.6",
+        "@babel/core": "^7.23.3",
+        "@babel/eslint-parser": "^7.23.3",
+        "@types/jest": "^29.5.8",
+        "@types/mocha": "^10.0.4",
+        "@types/node": "^18.18.9",
+        "@types/vscode": "^1.84.1",
+        "@vscode/test-electron": "^2.3.6",
+        "chai": "^4.3.10",
         "copy-webpack-plugin": "^11.0.0",
-        "eslint": "^8.25.0",
-        "jest": "^29.1.2",
-        "vsce": "^2.11.0",
+        "eslint": "^8.53.0",
+        "jest": "^29.7.0",
+        "vsce": "^2.15.0",
         "vscode-test": "^1.6.1",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^4.10.0"
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
     },
     "dependencies": {
-        "dotenv": "^16.0.3",
+        "dotenv": "^16.3.1",
         "lodash": "^4.17.21",
-        "minimatch": "^5.1.0",
-        "xml2js": "^0.4.23"
+        "minimatch": "^9.0.3",
+        "xml2js": "^0.6.2"
     },
     "standard": {
         "env": [

@@ -33,6 +33,7 @@ Ant build output can be colorized, environment variables can be set and targets 
 ![Reveal definition](/resources/autotarget.gif "Auto targets")
 
 - Will load env vars from build.env (configurable) and pass them into ant.
+- The file that triggered the auto build is passed into the build script as a parameter named autoTargetTriggerFilename.
 
 ## Requirements
 
@@ -99,8 +100,16 @@ The autoTarget file build.auto (or whatever is configured) should be in the json
 ```
 
 ## Release Notes
+Dependencies weren't been parsed correctly after the first one so you couldn't run them correctly.
+Send in file that caused the auto build as a parameter to the ant script.
+Updated dependencies.
 
-Run target was failing if a target name had brackets in but no spaces.
+## [0.5.0] - 2023-11-11
+### Fixed
+- Dependencies after the first had a space added at the front.
+### Added
+- Pass triggering file to auto build script.
+- Bump dependencies.
 
 ## [0.4.3] - 2022-10-14
 ### Fixed

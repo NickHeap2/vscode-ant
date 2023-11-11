@@ -1,6 +1,6 @@
 const fileHelper = require('./fileHelper')
 const fs = require('fs')
-const minimatch = require('minimatch')
+const { minimatch } = require('minimatch')
 const messageHelper = require('./messageHelper')
 
 var configOptions
@@ -54,7 +54,7 @@ module.exports = class AutoTargetRunner {
     this.loadAutoTargets()
   }
 
-  autoRunTarget (targets, sourceFile, delay) {
+  autoRunTarget (targets, sourceFile, delay, relativePath) {
     if (this.autoRunTasks[targets]) {
       // console.log('Clearing entry for:' + targets)
       try {
@@ -69,8 +69,8 @@ module.exports = class AutoTargetRunner {
       // console.log('Running entry for:' + targets)
       this.autoRunTasks[targets] = undefined
       // this.targetRunner.runAntTarget({name: targets, sourceFile: sourceFile})
-      this.vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: targets, sourceFile: sourceFile})
-    }, delay, targets)
+      this.vscode.commands.executeCommand('vscode-ant.runAntTarget', {name: targets, sourceFile: sourceFile, triggerFile: relativePath})
+    }, delay)
   }
 
   watchAutoTargetsFile () {
@@ -155,7 +155,7 @@ module.exports = class AutoTargetRunner {
     // find first match so we can have cascaded watchers
     for (const autoTarget of this.autoTargets) {
       if (minimatch(relativePath, autoTarget.filePattern)) {
-        this.autoRunTarget(autoTarget.runTargets, autoTarget.buildFile, autoTarget.initialDelayMs)
+        this.autoRunTarget(autoTarget.runTargets, autoTarget.buildFile, autoTarget.initialDelayMs, relativePath)
         break
       }
     }

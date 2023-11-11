@@ -89,8 +89,9 @@ module.exports = class AntTargetRunner {
             || target.indexOf(')') >= 0)) {
       target = '"' + target + '"'
     }
+    const triggerFile = context.triggerFile
 
-    this.runAntTarget({ name: target, sourceFile: context.sourceFile })
+    this.runAntTarget({ name: target, sourceFile: context.sourceFile, triggerFile })
   }
 
   runAntTarget (context) {
@@ -100,6 +101,7 @@ module.exports = class AntTargetRunner {
 
     const targets = context.name
     const buildFile = context.sourceFile
+    const triggerFile = context.triggerFile
 
     if (!this.antTerminal) {
       var envVars = {}
@@ -152,10 +154,16 @@ module.exports = class AntTargetRunner {
       }
     }
 
+    // pass triggering filename into script
+    let extraParams = ''
+    if (triggerFile) {
+      extraParams = ` -DautoTargetTriggerFilename="${triggerFile}"`
+    }
+
     if (buildFile && buildFile !== 'build.xml') {
-      this.antTerminal.sendText(`${this.antExecutable} -buildfile ${buildFile} ${targets}`)
+      this.antTerminal.sendText(`${this.antExecutable}${extraParams} -buildfile ${buildFile} ${targets}`)
     } else {
-      this.antTerminal.sendText(`${this.antExecutable} ${targets}`)
+      this.antTerminal.sendText(`${this.antExecutable}${extraParams} ${targets}`)
     }
 
     this.antTerminal.show(true)
